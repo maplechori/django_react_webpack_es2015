@@ -4,7 +4,6 @@ import Link from 'react-router/Link'
 import Redirect from 'react-router/Redirect'
 import Router from 'react-router/BrowserRouter'
 
-
 const fakeAuth = {
   isAuthenticated: false,
   authenticate(cb) {
@@ -34,12 +33,10 @@ const App = () => (
         ) : (
           <p>You are not logged in.</p>
         )}
-
         <ul>
           <li><Link to="/public">Public Page</Link></li>
           <li><Link to="/protected">Protected Page</Link></li>
         </ul>
-
       </div>
     )}
   </Router>
