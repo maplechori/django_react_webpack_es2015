@@ -1,55 +1,52 @@
 import React from 'react';
-import Match from 'react-router/Match'
-import Link from 'react-router/Link'
-import Redirect from 'react-router/Redirect'
-import Router from 'react-router/BrowserRouter'
+import Relay  from 'react-relay'
+
 
 
 class Surveys extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+
+  }
+
   render() {
-    return <div>{this.props.surveys.name}</div>;
+
+    return <div> <ul>{this.props.surveys.edges.map(edge => <li key={edge.node.id}>{edge.node.name}</li>)}</ul></div>;
   }
 }
 
 class SurveysRoute extends Relay.Route {
   static queries = {
-    surveys: () => Relay.QL`
-      query { surveys(name: $surveyID) }`,
-  }
-
-  static paramDefinitions = {
-    surveyID: {required: true},
-
-  }
+    surveys: () => Relay.QL`query { surveys }`
+  };
 
   static routeName = 'SurveysRoute';
 }
 
-
-
-SurveysContainer = Relay.createContainer(Surveys, {
+var SurveysContainer = Relay.createContainer(Surveys, {
  fragments: {
-   surveys: () => Relay.QL`
-     fragment on Surveys {
-       name
-     }
+     surveys: () => Relay.QL`
+       fragment on SurveyConnection {
+            edges {
+               node {
+                  id
+                  name
+               }
+            }
+       }
    `,
  }
 });
 
 
 const App = () => (
-  <Router>
-    {({ router }) => (
+
       <div>
-        <Relay.RootContainer  Component={Surveys}  route={SurveysRoute}
-    />,
-        <ul>
-          <li><Link to="/public">Public Page</Link></li>
-          <li><Link to="/protected">Protected Page</Link></li>
-        </ul>
+        <Relay.RootContainer Component={SurveysContainer}  route={new SurveysRoute()}/>,
+
       </div>
-    )}
-  </Router>
+
 )
 export default App;
