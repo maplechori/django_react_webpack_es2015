@@ -4,35 +4,46 @@ import Link from 'react-router/Link'
 import Redirect from 'react-router/Redirect'
 import Router from 'react-router/BrowserRouter'
 
-const fakeAuth = {
-  isAuthenticated: false,
-  authenticate(cb) {
-    this.isAuthenticated = true
-    setTimeout(cb, 100) // fake async
-  },
-  signout(cb) {
-    this.isAuthenticated = false
-    cb()
-    setTimeout(cb, 100) // weird bug if async?
+
+class Surveys extends React.Component {
+  render() {
+    return <div>{this.props.surveys.name}</div>;
   }
 }
+
+class SurveysRoute extends Relay.Route {
+  static queries = {
+    surveys: () => Relay.QL`
+      query { surveys(name: $surveyID) }`,
+  }
+
+  static paramDefinitions = {
+    surveyID: {required: true},
+
+  }
+
+  static routeName = 'SurveysRoute';
+}
+
+
+
+SurveysContainer = Relay.createContainer(Surveys, {
+ fragments: {
+   surveys: () => Relay.QL`
+     fragment on Surveys {
+       name
+     }
+   `,
+ }
+});
+
 
 const App = () => (
   <Router>
     {({ router }) => (
       <div>
-        {fakeAuth.isAuthenticated ? (
-          <p>
-            Welcome! {' '}
-            <button onClick={() => {
-              fakeAuth.signout(() => {
-                router.transitionTo('/')
-              })
-            }}>Sign out</button>
-          </p>
-        ) : (
-          <p>You are not logged in.</p>
-        )}
+        <Relay.RootContainer  Component={Surveys}  route={SurveysRoute}
+    />,
         <ul>
           <li><Link to="/public">Public Page</Link></li>
           <li><Link to="/protected">Protected Page</Link></li>

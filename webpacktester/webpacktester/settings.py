@@ -44,6 +44,10 @@ WEBPACK_LOADER = {
 }
 
 
+GRAPHENE = {
+    'SCHEMA': 'schema.schema',
+    'SCHEMA_OUTPUT': 'data/schema.json'
+}
 
 # Application definition
 
@@ -54,7 +58,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-     'webpack_loader',
+    'graphene_django',
+    'webpack_loader',
+    'wp'
 ]
 
 MIDDLEWARE = [
@@ -65,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'webpacktester.urls'
