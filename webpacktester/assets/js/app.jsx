@@ -19,7 +19,7 @@ class Surveys extends React.Component {
 
 class SurveysRoute extends Relay.Route {
   static queries = {
-    surveys: () => Relay.QL`query { surveys }`
+    surveys: () => Relay.QL`query Sapos { surveys }`
   };
 
   static routeName = 'SurveysRoute';
