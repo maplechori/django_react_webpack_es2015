@@ -1,8 +1,0 @@
-- model: wp.survey
-  pk: 1
-  fields:
-        name: USC Daily Tracking Poll
-- model: wp.survey
-  pk: 2
-  fields:
-        name: RAND PEPS
