@@ -14,6 +14,7 @@ class SurveyFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: "survey_%s" % n)
 
+
 class QuestionFactory(factory.django.DjangoModelFactory):
 
     class Meta:

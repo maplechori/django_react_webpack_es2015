@@ -19,15 +19,20 @@ module.exports = {
         loader: 'babel-loader',
         query:
           {
-            presets:['es2015','stage-1', 'react', {"plugins": ["./babelRelayPlugin"]}]
+            presets:[ 'es2015','stage-1', 'react', {"plugins": ["./babelRelayPlugin"]} ]
           }
       }, // to transform JSX into JS
       {
           test: /(\.scss|\.css)$/,
           loader: ExtractTextPlugin.extract('style', 'css?sourceMap&modules&importLoaders=1&localIdentName=[name]-[hash:base64:5]!postcss!sass')
-        }
+        },
+        {
+         test: /\.(eot|woff|woff2|svg|ttf)([\?]?.*)$/,
+         loader: "file-loader"
+       }
     ],
   },
+  devtool: "inline- source-map",
   postcss: [autoprefixer],
   sassLoader: {
        data: '@import "theme/_config.scss";',
