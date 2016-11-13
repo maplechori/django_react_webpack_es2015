@@ -8,6 +8,7 @@ import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import createFragment from 'react-addons-create-fragment'
+import {red500, yellow500, blue500} from 'material-ui/styles/colors';
 import styles from './SmartTable.scss';
 
 injectTapEventPlugin();
@@ -128,7 +129,7 @@ class SmartTable extends Component {
                   { header.sortable &&
                     <SortIcon
                       id={ header.dataAlias }
-                      className={ styles.sortIcon }
+                      
                       onMouseUp={ (e) => this.sortByColumn(e.target.id, this.state.data, limit) }
                     />
                   }
