@@ -67,7 +67,8 @@ class SmartTable extends Component {
       sortHeader: null,
       offset: 0,
       limit: props.limit,
-      page: []
+      page: [],
+      relay: props.relay,
     };
   }
 
@@ -75,15 +76,17 @@ class SmartTable extends Component {
     this.setState({
       data: this.props.data.edges,
       page: this.props.data.edges,
+      relay: this.props.relay
     });
   }
 
   componentWillReceiveProps(nextProps) {
+
     this.setState({
       offset: 0,
       sortHeader: null,
-      data: nextProps.data,
-      page: nextProps.data ? nextProps.data.slice(this.state.offset, nextProps.limit) : [],
+      data: nextProps.data.edges,
+      page: nextProps.data.edges
     });
   }
 
@@ -109,6 +112,10 @@ class SmartTable extends Component {
       page: this.state.data.slice(offset, offset + limit),
       offset,
     });
+  }
+
+  paginateRelay(edges) {
+      this.state.relay.setVariables({ cursor :  edges[edges.length - 1].cursor, pageSize: 3 });
   }
 
   render() {
@@ -149,10 +156,10 @@ class SmartTable extends Component {
             <TableRowColumn>
               <div className={ styles.footerControls }>
                 { `${Math.min((offset + 1), total)} - ${Math.min((offset + limit), total)} of ${total}` }
-                <IconButton disabled={!this.props.data.pageInfo.hasPreviousPage} onClick={ () => this.paginate(offset - limit, limit) }>
+                <IconButton disabled={!this.props.data.pageInfo.hasPreviousPage} onClick={ () => this.paginateRelay(this.props.data.edges) }>
                   <ChevronLeft />
                 </IconButton>
-                <IconButton disabled={!this.props.data.pageInfo.hasNextPage} onClick={ () => this.paginate(offset + limit, limit) }>
+                <IconButton disabled={!this.props.data.pageInfo.hasNextPage} onClick={ () => this.paginateRelay(this.props.data.edges) }>
                   <ChevronRight />
                 </IconButton>
               </div>

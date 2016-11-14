@@ -1,10 +1,12 @@
-from graphene import relay, ObjectType, AbstractType
+from graphene import relay, ObjectType, AbstractType, resolve_only_args
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 import django_filters
 from .models import Survey as SurveyModel
 from .models import Section as SectionModel
 from .models import Question as QuestionModel
+from django.contrib.auth.models import User as UserModel
+
 from graphene_django.debug import DjangoDebug
 
 
@@ -52,11 +54,7 @@ class Section(DjangoObjectType):
         filter_fields = ['name'] #{ 'name' : ['exact', 'icontains']}
         filter_order_by = True
 
-    @staticmethod
-    def to_global_id(type, id):
-        return '{}:{}'.format(type, id)
-
-Section.Connection = connection_for_type(Section)
+#Section.Connection = connection_for_type(Section)
 
 class Question(DjangoObjectType):
     class Meta:
@@ -68,6 +66,19 @@ class Question(DjangoObjectType):
     def to_global_id(type, id):
         return '{}:{}'.format(type, id)
 
+class User(DjangoObjectType):
+    class Meta:
+        model = UserModel
+        interfaces = (relay.Node, )
+
+    """totalCount = Int()
+    completedCount = Int()
+
+    def resolve_totalCount(self, args, context, info):
+        return self.todos.count()
+
+    def resolve_completedCount(self, args, context, info):
+        return self.todos.filter(completed=True).count()"""
 
 class SurveyQuery(graphene.ObjectType, AbstractType):
     node = relay.Node.Field()
@@ -82,7 +93,9 @@ class SurveyQuery(graphene.ObjectType, AbstractType):
     section = relay.Node.Field(Section)
     viewer = graphene.Field(lambda: SurveyQuery)
 
-    debug = graphene.Field(DjangoDebug, name='__debug')
+    @resolve_only_args
+    def resolve_viewer(self):
+        return get_view()
 
-    def resolve_viewer(self, *args, **kwargs):
-        return self
+def get_view():
+    return SurveyQuery

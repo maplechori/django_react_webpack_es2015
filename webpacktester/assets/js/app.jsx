@@ -43,14 +43,16 @@ class Surveys extends React.Component {
 
   constructor(props) {
     super(props);
+
   }
 
   render() {
+
     return (<div>
     <MuiThemeProvider>
       <div>
         <TableExampleSimple/>
-        <SmartTable { ...{ tableHeaders, data: this.props.surveys, limit: 5, false, relay: this.props.relay } } />
+        <SmartTable { ...{ tableHeaders, data: this.props.viewer.sections, limit: 5, false, relay: this.props.relay } } />
         </div>
       </MuiThemeProvider>
    </div>)
@@ -59,26 +61,50 @@ class Surveys extends React.Component {
 
 class SurveysRoute extends Relay.Route {
   static queries = {
-    surveys: () => Relay.QL`query { sections }`,
-    viewer: () => Relay.QL`query { sections }`,
-
+    surveys: () => Relay.QL`query { viewer }`,
+    viewer: (Component) => Relay.QL`
+        query {
+          viewer {
+              ${Component.getFragment('viewer')}
+              }
+      }`,
   };
 
   static routeName = 'SurveysRoute';
 }
 
 var SurveysContainer = Relay.createContainer(Surveys, {
+  initialVariables: {
+    pageSize: 3,
+    cursor: null,
+    before_cursor: null,
+    before_pageSize: null
+  },
+
  fragments: {
      viewer: () => Relay.QL`
-        query SectionConnection {
-
-                totalCount
-
-
-          }
+        fragment on SurveyQuery {
+        
+         sections( first: $pageSize,after: $cursor, last: $before_pageSize,  before: $before_cursor,  ) {
+                        edges {
+                          node {
+                             id
+                             name
+                          }
+                          cursor
+                        }
+                  pageInfo {
+                     hasNextPage
+                     hasPreviousPage
+                     startCursor
+                     endCursor
+                  }
+                }
+              }
      `,
      surveys: () => Relay.QL`
-       fragment on SectionConnection {
+       fragment on SurveyQuery {
+       sections(first: $pageSize, after: $cursor, before: $before_cursor, last: $pageSize) {
                      edges {
                        node {
                           id
@@ -89,8 +115,11 @@ var SurveysContainer = Relay.createContainer(Surveys, {
                pageInfo {
                   hasNextPage
                   hasPreviousPage
+                  startCursor
+                  endCursor
                }
              }
+           }
    `,
  }
 });
