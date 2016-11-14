@@ -46,7 +46,10 @@ WEBPACK_LOADER = {
 
 GRAPHENE = {
     'SCHEMA': 'schema.schema',
-    'SCHEMA_OUTPUT': 'data/schema.json'
+    'SCHEMA_OUTPUT': 'data/schema.json',
+     'MIDDLEWARE': (
+        'graphene_django.debug.DjangoDebugMiddleware',
+    )
 }
 
 # Application definition

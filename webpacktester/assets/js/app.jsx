@@ -3,31 +3,65 @@ import Relay  from 'react-relay'
 import SmartTable from './SmartTable/SmartTable.jsx'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import 'roboto-fontface/css/roboto/sass/roboto-fontface-regular.scss';
+import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 
+const TableExampleSimple = () => (
+  <Table>
+    <TableHeader>
+      <TableRow>
+        <TableHeaderColumn>ID</TableHeaderColumn>
+        <TableHeaderColumn>Name</TableHeaderColumn>
+        <TableHeaderColumn>Status</TableHeaderColumn>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      <TableRow>
+        <TableRowColumn>1</TableRowColumn>
+        <TableRowColumn>John Smith</TableRowColumn>
+        <TableRowColumn>Employed</TableRowColumn>
+      </TableRow>
+      <TableRow>
+        <TableRowColumn>2</TableRowColumn>
+        <TableRowColumn>Randal White</TableRowColumn>
+        <TableRowColumn>Unemployed</TableRowColumn>
+      </TableRow>
+      <TableRow>
+        <TableRowColumn>3</TableRowColumn>
+        <TableRowColumn>Stephanie Sanders</TableRowColumn>
+        <TableRowColumn>Employed</TableRowColumn>
+      </TableRow>
+      <TableRow>
+        <TableRowColumn>4</TableRowColumn>
+        <TableRowColumn>Steve Brown</TableRowColumn>
+        <TableRowColumn>Employed</TableRowColumn>
+      </TableRow>
+    </TableBody>
+  </Table>
+);
 
 class Surveys extends React.Component {
 
   constructor(props) {
     super(props);
-
-    console.log(props);
   }
 
   render() {
     return (<div>
     <MuiThemeProvider>
-      <SmartTable { ...{ tableHeaders, data, limit: 20, total: data.length, false } } />
-    </MuiThemeProvider>
-
-     <ul>{this.props.surveys.edges.map(edge => <li key={edge.node.id}>{edge.node.name}</li>)}</ul>
+      <div>
+        <TableExampleSimple/>
+        <SmartTable { ...{ tableHeaders, data: this.props.surveys, limit: 5, false, relay: this.props.relay } } />
+        </div>
+      </MuiThemeProvider>
    </div>)
   }
 }
 
 class SurveysRoute extends Relay.Route {
   static queries = {
-    surveys: () => Relay.QL`query { sections(first: 3) }`,
-    viewer: () => Relay.QL`query { sections(orderBy: "name") }`
+    surveys: () => Relay.QL`query { sections }`,
+    viewer: () => Relay.QL`query { sections }`,
+
   };
 
   static routeName = 'SurveysRoute';
@@ -36,47 +70,43 @@ class SurveysRoute extends Relay.Route {
 var SurveysContainer = Relay.createContainer(Surveys, {
  fragments: {
      viewer: () => Relay.QL`
-          fragment on SectionConnection {
-                   edges {
-                     node {
-                       id
-                       name
-                     }
-                   }
+        query SectionConnection {
+
+                totalCount
+
+
           }
      `,
      surveys: () => Relay.QL`
        fragment on SectionConnection {
-            edges {
-               node {
-                  id
-                  name
+                     edges {
+                       node {
+                          id
+                          name
+                       }
+                       cursor
+                     }
+               pageInfo {
+                  hasNextPage
+                  hasPreviousPage
                }
-            }
-
-       }
+             }
    `,
  }
 });
 
-const tableHeaders = [
+const tableHeaders =
+[
+  { alias: 'ID', sortable: true, dataAlias: 'id', format: { type: 'status' } },
   { alias: 'Name', sortable: true, dataAlias: 'name', format: { type: 'status' } },
-  { alias: 'Status', sortable: true, dataAlias: 'status', format: { type: 'status' } },
-  { alias: 'Birth Date', sortable: true, dataAlias: 'birth_date', format: { type: 'date' } }]
-
-let data = [
-  { name: "John", status: "Single", birth_date: '1 Jan 1966' },
-  { name: "David", status: "Married", birth_date: '5 Feb 1914' },
 ]
 
 
 
 const App = () => (
-
       <div>
-        <Relay.RootContainer Component={SurveysContainer}  route={new SurveysRoute()}/>,
-
+          <Relay.RootContainer Component={SurveysContainer}  route={new SurveysRoute()}/>,
       </div>
+    )
 
-)
 export default App;

@@ -5,8 +5,23 @@ import django_filters
 from .models import Survey as SurveyModel
 from .models import Section as SectionModel
 from .models import Question as QuestionModel
+from graphene_django.debug import DjangoDebug
+
 
 import graphene
+
+def connection_for_type(_type):
+    class Connection(graphene.Connection):
+        total_count = graphene.Int()
+
+        class Meta:
+            name = _type._meta.name + 'Connection'
+            node = _type
+
+        def resolve_total_count(self, args, context, info):
+            return self.length
+
+    return Connection
 
 class Survey(DjangoObjectType):
     class Meta:
@@ -14,9 +29,11 @@ class Survey(DjangoObjectType):
         interfaces = (relay.Node,)
         filter_fields = { 'name' : ['exact', 'icontains']}
 
+
     @staticmethod
     def to_global_id(type, id):
         return '{}:{}'.format(type, id)
+
 
 class SectionFilter(django_filters.FilterSet):
     # Do case-insensitive lookups on 'name'
@@ -39,6 +56,7 @@ class Section(DjangoObjectType):
     def to_global_id(type, id):
         return '{}:{}'.format(type, id)
 
+Section.Connection = connection_for_type(Section)
 
 class Question(DjangoObjectType):
     class Meta:
@@ -62,3 +80,9 @@ class SurveyQuery(graphene.ObjectType, AbstractType):
 
     sections = DjangoFilterConnectionField(Section) #, filterset_class=SectionFilter)
     section = relay.Node.Field(Section)
+    viewer = graphene.Field(lambda: SurveyQuery)
+
+    debug = graphene.Field(DjangoDebug, name='__debug')
+
+    def resolve_viewer(self, *args, **kwargs):
+        return self

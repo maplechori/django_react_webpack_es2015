@@ -294,8 +294,8 @@
                             "args": [
                                 {
                                     "defaultValue": null,
-                                    "description": null,
-                                    "name": "orderBy",
+                                    "description": "Filter",
+                                    "name": "name",
                                     "type": {
                                         "kind": "SCALAR",
                                         "name": "String",
@@ -304,8 +304,8 @@
                                 },
                                 {
                                     "defaultValue": null,
-                                    "description": "Filter",
-                                    "name": "name",
+                                    "description": null,
+                                    "name": "orderBy",
                                     "type": {
                                         "kind": "SCALAR",
                                         "name": "String",
@@ -387,6 +387,30 @@
                             "type": {
                                 "kind": "OBJECT",
                                 "name": "Section",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "viewer",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "SurveyQuery",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "__debug",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "DjangoDebug",
                                 "ofType": null
                             }
                         }
@@ -659,8 +683,8 @@
                             "args": [
                                 {
                                     "defaultValue": null,
-                                    "description": null,
-                                    "name": "orderBy",
+                                    "description": "Filter",
+                                    "name": "name",
                                     "type": {
                                         "kind": "SCALAR",
                                         "name": "String",
@@ -669,8 +693,8 @@
                                 },
                                 {
                                     "defaultValue": null,
-                                    "description": "Filter",
-                                    "name": "name",
+                                    "description": null,
+                                    "name": "orderBy",
                                     "type": {
                                         "kind": "SCALAR",
                                         "name": "String",
@@ -775,6 +799,18 @@
                                     "name": "SectionEdge",
                                     "ofType": null
                                 }
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "totalCount",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "Int",
+                                "ofType": null
                             }
                         }
                     ],
@@ -952,8 +988,8 @@
                             "args": [
                                 {
                                     "defaultValue": null,
-                                    "description": null,
-                                    "name": "orderBy",
+                                    "description": "Filter",
+                                    "name": "name",
                                     "type": {
                                         "kind": "SCALAR",
                                         "name": "String",
@@ -962,8 +998,8 @@
                                 },
                                 {
                                     "defaultValue": null,
-                                    "description": "Filter",
-                                    "name": "name",
+                                    "description": null,
+                                    "name": "orderBy",
                                     "type": {
                                         "kind": "SCALAR",
                                         "name": "String",
@@ -1074,8 +1110,8 @@
                             "args": [
                                 {
                                     "defaultValue": null,
-                                    "description": null,
-                                    "name": "orderBy",
+                                    "description": "Filter",
+                                    "name": "name",
                                     "type": {
                                         "kind": "SCALAR",
                                         "name": "String",
@@ -1084,8 +1120,8 @@
                                 },
                                 {
                                     "defaultValue": null,
-                                    "description": "Filter",
-                                    "name": "name",
+                                    "description": null,
+                                    "name": "orderBy",
                                     "type": {
                                         "kind": "SCALAR",
                                         "name": "String",
@@ -1246,6 +1282,584 @@
                     "interfaces": [],
                     "kind": "OBJECT",
                     "name": "QuestionEdge",
+                    "possibleTypes": null
+                },
+                {
+                    "description": null,
+                    "enumValues": null,
+                    "fields": [
+                        {
+                            "args": [
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "id",
+                                    "type": {
+                                        "kind": "NON_NULL",
+                                        "name": null,
+                                        "ofType": {
+                                            "kind": "SCALAR",
+                                            "name": "ID",
+                                            "ofType": null
+                                        }
+                                    }
+                                }
+                            ],
+                            "deprecationReason": null,
+                            "description": "The ID of the object",
+                            "isDeprecated": false,
+                            "name": "node",
+                            "type": {
+                                "kind": "INTERFACE",
+                                "name": "Node",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [
+                                {
+                                    "defaultValue": null,
+                                    "description": "Filter",
+                                    "name": "name_Icontains",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": "Filter",
+                                    "name": "name",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "before",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "after",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "first",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "Int",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "last",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "Int",
+                                        "ofType": null
+                                    }
+                                }
+                            ],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "surveys",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "SurveyConnection",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "id",
+                                    "type": {
+                                        "kind": "NON_NULL",
+                                        "name": null,
+                                        "ofType": {
+                                            "kind": "SCALAR",
+                                            "name": "ID",
+                                            "ofType": null
+                                        }
+                                    }
+                                }
+                            ],
+                            "deprecationReason": null,
+                            "description": "The ID of the object",
+                            "isDeprecated": false,
+                            "name": "survey",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "Survey",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [
+                                {
+                                    "defaultValue": null,
+                                    "description": "Filter",
+                                    "name": "name_Icontains",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": "Filter",
+                                    "name": "name",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "before",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "after",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "first",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "Int",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "last",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "Int",
+                                        "ofType": null
+                                    }
+                                }
+                            ],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "questions",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "QuestionConnection",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "id",
+                                    "type": {
+                                        "kind": "NON_NULL",
+                                        "name": null,
+                                        "ofType": {
+                                            "kind": "SCALAR",
+                                            "name": "ID",
+                                            "ofType": null
+                                        }
+                                    }
+                                }
+                            ],
+                            "deprecationReason": null,
+                            "description": "The ID of the object",
+                            "isDeprecated": false,
+                            "name": "question",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "Question",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [
+                                {
+                                    "defaultValue": null,
+                                    "description": "Filter",
+                                    "name": "name",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "orderBy",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "before",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "after",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "String",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "first",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "Int",
+                                        "ofType": null
+                                    }
+                                },
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "last",
+                                    "type": {
+                                        "kind": "SCALAR",
+                                        "name": "Int",
+                                        "ofType": null
+                                    }
+                                }
+                            ],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "sections",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "SectionConnection",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [
+                                {
+                                    "defaultValue": null,
+                                    "description": null,
+                                    "name": "id",
+                                    "type": {
+                                        "kind": "NON_NULL",
+                                        "name": null,
+                                        "ofType": {
+                                            "kind": "SCALAR",
+                                            "name": "ID",
+                                            "ofType": null
+                                        }
+                                    }
+                                }
+                            ],
+                            "deprecationReason": null,
+                            "description": "The ID of the object",
+                            "isDeprecated": false,
+                            "name": "section",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "Section",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "viewer",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "SurveyQuery",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "__debug",
+                            "type": {
+                                "kind": "OBJECT",
+                                "name": "DjangoDebug",
+                                "ofType": null
+                            }
+                        }
+                    ],
+                    "inputFields": null,
+                    "interfaces": [],
+                    "kind": "OBJECT",
+                    "name": "SurveyQuery",
+                    "possibleTypes": null
+                },
+                {
+                    "description": null,
+                    "enumValues": null,
+                    "fields": [
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "sql",
+                            "type": {
+                                "kind": "LIST",
+                                "name": null,
+                                "ofType": {
+                                    "kind": "OBJECT",
+                                    "name": "DjangoDebugSQL",
+                                    "ofType": null
+                                }
+                            }
+                        }
+                    ],
+                    "inputFields": null,
+                    "interfaces": [],
+                    "kind": "OBJECT",
+                    "name": "DjangoDebug",
+                    "possibleTypes": null
+                },
+                {
+                    "description": null,
+                    "enumValues": null,
+                    "fields": [
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "vendor",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "alias",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "sql",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "duration",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "Float",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "rawSql",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "params",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "startTime",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "Float",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "stopTime",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "Float",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "isSlow",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "Boolean",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "isSelect",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "Boolean",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "transId",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "transStatus",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "isoLevel",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        },
+                        {
+                            "args": [],
+                            "deprecationReason": null,
+                            "description": null,
+                            "isDeprecated": false,
+                            "name": "encoding",
+                            "type": {
+                                "kind": "SCALAR",
+                                "name": "String",
+                                "ofType": null
+                            }
+                        }
+                    ],
+                    "inputFields": null,
+                    "interfaces": [],
+                    "kind": "OBJECT",
+                    "name": "DjangoDebugSQL",
+                    "possibleTypes": null
+                },
+                {
+                    "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](http://en.wikipedia.org/wiki/IEEE_floating_point). ",
+                    "enumValues": null,
+                    "fields": null,
+                    "inputFields": null,
+                    "interfaces": null,
+                    "kind": "SCALAR",
+                    "name": "Float",
                     "possibleTypes": null
                 },
                 {

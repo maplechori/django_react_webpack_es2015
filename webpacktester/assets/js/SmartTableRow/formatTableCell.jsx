@@ -8,12 +8,7 @@ export default (cell, format, row) => {
     case 'link':
       return <Link style={ { color: 'black' } } to={ `${format.url}` }>{ cell }</Link>;
     case 'button':
-      return (
-        <FlatButton
-          primary
-          label={ `${format.text}` }
-        />
-      );
+      return (<FlatButton primary label={ `${format.text}` } /> );
     case 'date':
       return new Date().toString();
     case 'percentage':

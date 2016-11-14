@@ -60,6 +60,7 @@ export function processTableData(data) {
 
 class SmartTable extends Component {
   constructor(props) {
+    console.log(props);
     super(props);
     this.state = {
       isAsc: true,
@@ -72,8 +73,8 @@ class SmartTable extends Component {
 
   componentWillMount() {
     this.setState({
-      data: this.props.data,
-      page: this.props.data ? this.props.data.slice(this.state.offset, this.props.limit) : [],
+      data: this.props.data.edges,
+      page: this.props.data.edges,
     });
   }
 
@@ -112,9 +113,10 @@ class SmartTable extends Component {
 
   render() {
 
-    const { total, tableHeaders, isLoading } = this.props;
+    const {   tableHeaders, isLoading } = this.props;
     const { offset, limit, page } = this.state;
 
+    let total = 100;
     const processedData = processTableData(page);
 
 
@@ -127,11 +129,7 @@ class SmartTable extends Component {
                 <div className={ styles.rowAlign }>
                   { header.alias }
                   { header.sortable &&
-                    <SortIcon
-                      id={ header.dataAlias }
-                      
-                      onMouseUp={ (e) => this.sortByColumn(e.target.id, this.state.data, limit) }
-                    />
+                    <SortIcon id={ header.dataAlias }  onMouseUp={ (e) => this.sortByColumn(e.target.id, this.state.data, limit) }  />
                   }
                 </div>
               </TableHeaderColumn>
@@ -151,10 +149,10 @@ class SmartTable extends Component {
             <TableRowColumn>
               <div className={ styles.footerControls }>
                 { `${Math.min((offset + 1), total)} - ${Math.min((offset + limit), total)} of ${total}` }
-                <IconButton disabled={ offset === 0 } onClick={ () => this.paginate(offset - limit, limit) }>
+                <IconButton disabled={!this.props.data.pageInfo.hasPreviousPage} onClick={ () => this.paginate(offset - limit, limit) }>
                   <ChevronLeft />
                 </IconButton>
-                <IconButton disabled={ offset + limit >= total } onClick={ () => this.paginate(offset + limit, limit) }>
+                <IconButton disabled={!this.props.data.pageInfo.hasNextPage} onClick={ () => this.paginate(offset + limit, limit) }>
                   <ChevronRight />
                 </IconButton>
               </div>
@@ -168,7 +166,7 @@ class SmartTable extends Component {
 
 SmartTable.propTypes = {
   tableHeaders: PropTypes.array,
-  data: PropTypes.array,
+  data: PropTypes.object,
   offset: PropTypes.number, // current offset
   total: PropTypes.number, // total number of rows
   limit: PropTypes.number, // num of rows in each page,
