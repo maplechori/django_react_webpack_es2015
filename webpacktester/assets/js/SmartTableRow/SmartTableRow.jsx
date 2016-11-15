@@ -1,6 +1,8 @@
 import { TableRow, TableRowColumn } from 'material-ui/Table';
 import React, { PropTypes, Component } from 'react';
 import formatTableCell from './formatTableCell';
+import createFragment from 'react-addons-create-fragment'
+
 
 class SmartTableRow extends Component {
   render() {
@@ -8,11 +10,11 @@ class SmartTableRow extends Component {
 
 
     return (
-      <TableRow key={ index } selected={row.selected}>
-
+      <TableRow key={ index }>
         { tableHeaders.map((header, propIndex) => (
           <TableRowColumn key={ propIndex }>
-                  {formatTableCell(row[header.dataAlias], header.format, row)}
+          {formatTableCell(row[header.dataAlias], header.format, row)}
+
           </TableRowColumn>
         )) }
       </TableRow>

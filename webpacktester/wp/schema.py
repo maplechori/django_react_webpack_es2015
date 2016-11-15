@@ -47,12 +47,26 @@ class SectionFilter(django_filters.FilterSet):
         fields = ['name']
         filter_order_by = True
 
+
+
 class Section(DjangoObjectType):
     class Meta:
         model = SectionModel
         interfaces = (relay.Node,)
         filter_fields = ['name'] #{ 'name' : ['exact', 'icontains']}
         filter_order_by = True
+
+    totalCount = graphene.Int()
+    completedCount = graphene.Int()
+
+    @staticmethod
+    def resolve_totalCount(self, args, context, info):
+        return SectionModel.objects.count()
+
+    @staticmethod
+    def resolve_completedCount(self, args, context, info):
+        return SectionModel.objects.filter(completed=True).count()
+
 
 #Section.Connection = connection_for_type(Section)
 

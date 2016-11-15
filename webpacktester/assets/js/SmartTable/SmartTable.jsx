@@ -10,20 +10,29 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import createFragment from 'react-addons-create-fragment'
 import {red500, yellow500, blue500} from 'material-ui/styles/colors';
 import styles from './SmartTable.scss';
+import formatTableCell from '../SmartTableRow/formatTableCell';
+
 
 injectTapEventPlugin();
 
 
 function sortFunc(a, b, key) {
-  if (typeof (a[key]) === 'number') {
-    return a[key] - b[key];
+
+
+  if (typeof (a.node[key]) === 'number') {
+    return a.node[key] - b.node[key];
   }
+
 
   const ax = [];
   const bx = [];
 
-  a[key].replace(/(\d+)|(\D+)/g, (_, $1, $2) => { ax.push([$1 || Infinity, $2 || '']); });
-  b[key].replace(/(\d+)|(\D+)/g, (_, $1, $2) => { bx.push([$1 || Infinity, $2 || '']); });
+  if (a.node[key] === undefined)
+    return 0;
+
+
+  (a.node[key]).replace(/(\d+)|(\D+)/g, (_, $1, $2) => { ax.push([$1 || Infinity, $2 || '']); });
+  (b.node[key]).replace(/(\d+)|(\D+)/g, (_, $1, $2) => { bx.push([$1 || Infinity, $2 || '']); });
 
   while (ax.length && bx.length) {
     const an = ax.shift();
@@ -60,7 +69,6 @@ export function processTableData(data) {
 
 class SmartTable extends Component {
   constructor(props) {
-    console.log(props);
     super(props);
     this.state = {
       isAsc: true,
@@ -76,7 +84,8 @@ class SmartTable extends Component {
     this.setState({
       data: this.props.data.edges,
       page: this.props.data.edges,
-      relay: this.props.relay
+      relay: this.props.relay,
+      currentPage: 1
     });
   }
 
@@ -130,6 +139,12 @@ class SmartTable extends Component {
     return (
       <Table className={ styles.table } selectable={ true }>
         <TableHeader displaySelectAll={ false } adjustForCheckbox={ true }>
+        <TableRow>
+               <TableHeaderColumn colSpan="{tableHeaders.length}"  style={{textAlign: 'center'}}>
+                 Sections
+               </TableHeaderColumn>
+             </TableRow>
+
           <TableRow>
             { !!tableHeaders && tableHeaders.map((header, index) => (
               <TableHeaderColumn key={ index }>
@@ -143,11 +158,16 @@ class SmartTable extends Component {
             )) }
           </TableRow>
         </TableHeader>
-        <TableBody showRowHover={true} stripedRows={true} displayRowCheckbox={ true } preScanRows={false}>
+
+        <TableBody showRowHover={true} stripedRows={false} displayRowCheckbox={true} preScanRows={true}>
           {
             (isLoading && <TableSpinner />) ||
             (processedData.map(( row, index ) => (
-                 <SmartTableRow key={ index } { ...{ row, index, tableHeaders } } />
+              <TableRow key={index} selected={row.selected}>
+                  <TableRowColumn>{row.id}</TableRowColumn>
+                  <TableRowColumn>{row.name}</TableRowColumn>
+                  <TableRowColumn> {row.name}</TableRowColumn>
+              </TableRow>
             )))
           }
         </TableBody>
@@ -155,10 +175,10 @@ class SmartTable extends Component {
           <TableRow>
             <TableRowColumn>
               <div className={ styles.footerControls }>
-                { `${Math.min((offset + 1), total)} - ${Math.min((offset + limit), total)} of ${total}` }
-                <IconButton disabled={!this.props.data.pageInfo.hasPreviousPage} onClick={ () => this.paginateRelay(this.props.data.edges) }>
+                { `${Math.min((offset + 1), total)} - ${Math.min((offset + limit), total)} of ${this.props.data.edges[0].node.totalCount}` }
+                {/*<IconButton disabled={!this.props.data.pageInfo.hasPreviousPage} onClick={ () => this.paginateRelay(this.props.data.edges) }>
                   <ChevronLeft />
-                </IconButton>
+                </IconButton>*/}
                 <IconButton disabled={!this.props.data.pageInfo.hasNextPage} onClick={ () => this.paginateRelay(this.props.data.edges) }>
                   <ChevronRight />
                 </IconButton>
