@@ -59,8 +59,11 @@ class Section(DjangoObjectType):
     totalCount = graphene.Int()
     completedCount = graphene.Int()
 
+
+
     @staticmethod
     def resolve_totalCount(self, args, context, info):
+        print(SectionModel.objects.count())
         return SectionModel.objects.count()
 
     @staticmethod

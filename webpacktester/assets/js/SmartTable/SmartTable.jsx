@@ -124,27 +124,26 @@ class SmartTable extends Component {
   }
 
   paginateRelay(edges) {
-      this.state.relay.setVariables({ cursor :  edges[edges.length - 1].cursor, pageSize: 3 });
+      this.setState({currentPage: this.state.currentPage + 1 })
+      this.state.relay.setVariables({ cursor :  edges[edges.length - 1].cursor, pageSize: this.state.limit});
   }
+
 
   render() {
 
     const {   tableHeaders, isLoading } = this.props;
     const { offset, limit, page } = this.state;
 
-    let total = 100;
     const processedData = processTableData(page);
+
+    const columns = tableHeaders.map((row, index) => (
+         row.dataAlias
+       ));
 
 
     return (
-      <Table className={ styles.table } selectable={ true }>
+      <Table className={ styles.table } selectable={ true } onRowSelection={this.props.onRowSelection}>
         <TableHeader displaySelectAll={ false } adjustForCheckbox={ true }>
-        <TableRow>
-               <TableHeaderColumn colSpan="{tableHeaders.length}"  style={{textAlign: 'center'}}>
-                 Sections
-               </TableHeaderColumn>
-             </TableRow>
-
           <TableRow>
             { !!tableHeaders && tableHeaders.map((header, index) => (
               <TableHeaderColumn key={ index }>
@@ -164,9 +163,9 @@ class SmartTable extends Component {
             (isLoading && <TableSpinner />) ||
             (processedData.map(( row, index ) => (
               <TableRow key={index} selected={row.selected}>
-                  <TableRowColumn>{row.id}</TableRowColumn>
-                  <TableRowColumn>{row.name}</TableRowColumn>
-                  <TableRowColumn> {row.name}</TableRowColumn>
+                    {columns.map( (inner, indexing) => (
+                          <TableRowColumn key={indexing }>{row[inner]}</TableRowColumn>
+                        ))}
               </TableRow>
             )))
           }
@@ -175,10 +174,7 @@ class SmartTable extends Component {
           <TableRow>
             <TableRowColumn>
               <div className={ styles.footerControls }>
-                { `${Math.min((offset + 1), total)} - ${Math.min((offset + limit), total)} of ${this.props.data.edges[0].node.totalCount}` }
-                {/*<IconButton disabled={!this.props.data.pageInfo.hasPreviousPage} onClick={ () => this.paginateRelay(this.props.data.edges) }>
-                  <ChevronLeft />
-                </IconButton>*/}
+                  Page {this.state.currentPage} of {this.props.totalPages}
                 <IconButton disabled={!this.props.data.pageInfo.hasNextPage} onClick={ () => this.paginateRelay(this.props.data.edges) }>
                   <ChevronRight />
                 </IconButton>
@@ -198,6 +194,8 @@ SmartTable.propTypes = {
   total: PropTypes.number, // total number of rows
   limit: PropTypes.number, // num of rows in each page,
   isLoading: PropTypes.bool,
+  relay: PropTypes.object, // relay object
+  totalPages: PropTypes.number
 };
 
 export default SmartTable;

@@ -5,20 +5,34 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import 'roboto-fontface/css/roboto/sass/roboto-fontface-regular.scss';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 
+const tableHeaders =
+[
+  { alias: 'Identification', sortable: true, dataAlias: 'id', format: { type: 'status' } },
+  { alias: 'Name of Section', sortable: true, dataAlias: 'name', format: { type: 'status' } },
+  { alias: 'Seconday Name of Section', sortable: true, dataAlias: 'name', format: { type: 'status' } },
+]
+
 
 class Surveys extends React.Component {
 
   constructor(props) {
     super(props);
+    this.handleSelection = this.handleSelection.bind(this);
+  }
 
+  handleSelection(key)
+  {
+    console.log(this, key);
   }
 
   render() {
 
     return (<div>
     <MuiThemeProvider>
-      <div> 
-        <SmartTable { ...{ tableHeaders, data: this.props.viewer.sections, limit: 5, false, relay: this.props.relay } } />
+      <div>
+        <SmartTable { ...{ tableHeaders, data: this.props.viewer.sections,
+                          limit: 10, false, relay: this.props.relay, onRowSelection: this.handleSelection,
+                          totalPages: Math.ceil(this.props.viewer.sections.edges[0].node.totalCount/10) } } />
         </div>
       </MuiThemeProvider>
    </div>)
@@ -27,7 +41,7 @@ class Surveys extends React.Component {
 
 class SurveysRoute extends Relay.Route {
   static queries = {
-    surveys: () => Relay.QL`query { viewer }`,
+
     viewer: (Component) => Relay.QL`
         query {
           viewer {
@@ -40,24 +54,30 @@ class SurveysRoute extends Relay.Route {
 }
 
 var SurveysContainer = Relay.createContainer(Surveys, {
+
   initialVariables: {
-    pageSize: 5 ,
+    pageSize: 10,
     cursor: null,
-    before_cursor: null,
-    before_pageSize: null
-  },
+    },
 
  fragments: {
      viewer: () => Relay.QL`
         fragment on SurveyQuery {
 
-         sections( first: $pageSize,after: $cursor,  ) {
+         sections( first: $pageSize, after: $cursor,  ) {
 
                         edges {
                           node {
                             totalCount
                              id
                              name
+                             survey(first: $pageSize) {
+                                    edges {
+                                      node {
+                                        name
+                                      }
+                                    }
+                             }
                           }
                           cursor
                         }
@@ -70,37 +90,9 @@ var SurveysContainer = Relay.createContainer(Surveys, {
                 }
               }
      `,
-     surveys: () => Relay.QL`
-       fragment on SurveyQuery {
-       sections(first: $pageSize, after: $cursor) {
-
-                     edges {
-                       node {
-                            totalCount
-                          id
-                          name
-                          name
-                       }
-                       cursor
-                     }
-               pageInfo {
-                    hasNextPage
-                    hasPreviousPage
-                    startCursor
-                    endCursor
-                 }
-             }
-           }
-   `,
  }
 });
 
-const tableHeaders =
-[
-  { alias: 'id', sortable: true, dataAlias: 'id', format: { type: 'status' } },
-  { alias: 'name', sortable: true, dataAlias: 'name', format: { type: 'status' } },
-    { alias: 'meh', sortable: true, dataAlias: 'name', format: { type: 'status' } },
-]
 
 
 
