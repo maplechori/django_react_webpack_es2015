@@ -124,8 +124,9 @@ class SmartTable extends Component {
   }
 
   paginateRelay(edges) {
-      this.setState({currentPage: this.state.currentPage + 1 })
+
       this.state.relay.setVariables({ cursor :  edges[edges.length - 1].cursor, pageSize: this.state.limit});
+        this.setState({currentPage: this.state.currentPage + 1 })
   }
 
 

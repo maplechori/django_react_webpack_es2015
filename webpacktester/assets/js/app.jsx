@@ -25,6 +25,9 @@ class Surveys extends React.Component {
     this.onChangeForm = this.onChangeForm.bind(this);
 }
 
+  requireAuth() {
+
+  }
 
   handleSelection(key)
   {
@@ -105,7 +108,7 @@ onChangeForm(event) {
                           limit: 10, false, relay: this.props.relay, onRowSelection: this.handleSelection,
                           totalPages: Math.ceil(this.props.viewer.sections.edges[0].node.totalCount/10) } } />
 
-        <TextField id="schemaID" value={this.state.schemaValue}
+        {/*<TextField id="schemaID" value={this.state.schemaValue}
    multiLine={true} onChange={this.onChangeSchema}
    rows={5}
    rowsMax={500}/>
@@ -118,29 +121,20 @@ onChangeForm(event) {
    <RaisedButton onClick={this._onChange}/>
 
    {this.state.schema ?
-      <SchemaForm schema={this.state.schema} form={this.state.form} model={this.props.model} onModelChange={this.props.onModelChange} /> : null}
+      <SchemaForm schema={this.state.schema} form={this.state.form} model={this.props.model} onModelChange={this.props.onModelChange} /> : null}*/}
 
+      <div id="container">
+     
+             {this.props.children}
+           </div>
 </div>
       </MuiThemeProvider>
    </div>)
   }
 }
 
-class SurveysRoute extends Relay.Route {
-  static queries = {
 
-    viewer: (Component) => Relay.QL`
-        query {
-          viewer {
-              ${Component.getFragment('viewer')}
-              }
-      }`,
-  };
-
-  static routeName = 'SurveysRoute';
-}
-
-var SurveysContainer = Relay.createContainer(Surveys, {
+export default Relay.createContainer(Surveys, {
 
   initialVariables: {
     pageSize: 10,
@@ -179,14 +173,3 @@ var SurveysContainer = Relay.createContainer(Surveys, {
      `,
  }
 });
-
-
-
-
-const App = () => (
-      <div>
-          <Relay.RootContainer Component={SurveysContainer}  route={new SurveysRoute()}/>,
-      </div>
-    )
-
-export default App;

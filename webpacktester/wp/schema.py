@@ -9,7 +9,7 @@ from django.contrib.auth.models import User as UserModel
 
 from graphene_django.debug import DjangoDebug
 
-
+import graph_auth.schema
 import graphene
 
 def connection_for_type(_type):
@@ -83,21 +83,13 @@ class Question(DjangoObjectType):
     def to_global_id(type, id):
         return '{}:{}'.format(type, id)
 
-class User(DjangoObjectType):
-    class Meta:
-        model = UserModel
-        interfaces = (relay.Node, )
 
-    """totalCount = Int()
-    completedCount = Int()
+class SurveyMutation(graph_auth.schema.Mutation, graphene.ObjectType, AbstractType):
+    pass
 
-    def resolve_totalCount(self, args, context, info):
-        return self.todos.count()
 
-    def resolve_completedCount(self, args, context, info):
-        return self.todos.filter(completed=True).count()"""
 
-class SurveyQuery(graphene.ObjectType, AbstractType):
+class SurveyQuery(graph_auth.schema.Query, graphene.ObjectType, AbstractType):
     node = relay.Node.Field()
 
     surveys = DjangoFilterConnectionField(Survey)
