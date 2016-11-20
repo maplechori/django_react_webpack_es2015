@@ -18,12 +18,21 @@ import Relay from 'react-relay';
 
   */}
 
-export default class LoginMutation extends Relay.Mutation {
+class LoginMutation extends Relay.Mutation {
 
   getMutation () {
-    this.props.user = null;
     return Relay.QL`mutation { loginUser }`;
   }
+
+  static fragments = {
+  user: () => Relay.QL`
+        fragment on UserNode {
+          firstName
+          token
+          id
+        }`
+  }
+
 
   getVariables () {
     return {
@@ -34,6 +43,7 @@ export default class LoginMutation extends Relay.Mutation {
   }
 
   getFatQuery () {
+    console.log('wee');
     return Relay.QL`
       fragment on LoginUserPayload {
         user {
@@ -47,20 +57,17 @@ export default class LoginMutation extends Relay.Mutation {
 
   getConfigs () {
     return [{
-      type: 'FIELDS_CHANGE',
-      fieldIDs: {
-        user: this.props.user.id
+      type: 'REQUIRED_CHILDREN',
+      children: [Relay.QL`
+        fragment on LoginUserPayload {
+         user{  id,
+        token
       }
+      }`]
     }];
   }
 
-  static fragments = {
-  user: () => Relay.QL`
-        fragment on UserNode {
-          id,
-
-        }
-   `}
-
 
 }
+
+export default LoginMutation;

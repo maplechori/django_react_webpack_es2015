@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import Relay from 'react-relay';
-
+import Login   from './login.js'
 import { createHashHistory } from 'history';
-import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router';
-import useRelay from 'react-router-relay';
+import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
+import useRelay from 'react-router-relay'
 
-import Login from './login'
+
 import App from './app'
 
 
@@ -17,7 +17,7 @@ function requireAuth(nextState, replace) {
             state: {nextPathname: '/app/'}
         })
     }*/
-  //  console.log(nextState, replace);
+    console.log(nextState, replace);
 
 
 }
@@ -59,36 +59,35 @@ const DashboardRelay = Relay.createContainer(Dashboard, {
     pageSize: 10,
     cursor: null,
     },
-  fragments: {
+
+    fragments: {
       viewer: () => Relay.QL`
          fragment on SurveyQuery {
-
-          sections( first: $pageSize, after: $cursor,  ) {
-
-                         edges {
-                           node {
-                             totalCount
-                              id
-                              name
-                              survey(first: $pageSize) {
-                                     edges {
-                                       node {
-                                         name
-                                       }
+              sections( first: $pageSize, after: $cursor,  ) {
+                       edges {
+                         node {
+                           totalCount
+                            id
+                            name
+                            survey(first: $pageSize) {
+                                   edges {
+                                     node {
+                                       name
                                      }
-                              }
-                           }
-                           cursor
+                                   }
+                            }
                          }
-                   pageInfo {
-                      hasNextPage
-                      hasPreviousPage
-                      startCursor
-                      endCursor
+                         cursor
+                       }
+                       pageInfo {
+                          hasNextPage
+                          hasPreviousPage
+                          startCursor
+                          endCursor
+                       }
+                     }
                    }
-                 }
-               }
-      `,
+                  `,
   }
 });
 
@@ -99,8 +98,8 @@ ReactDOM.render(
       history={browserHistory}
       render={applyRouterMiddleware(useRelay)}>
             <Route path="/" component={App} onEnter={requireAuth} queries={AppQueries}>
-            <IndexRoute component={DashboardRelay} queries={AppQueries}/>
-            <Route path="login" component={Login} queries={AppQueries}/>
+              <IndexRoute component={DashboardRelay} queries={AppQueries}/>
+              <Route path="login" component={Login} queries={AppQueries}/>
             </Route>
        </Router>,
       document.getElementById('react-app'))

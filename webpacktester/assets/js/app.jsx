@@ -80,22 +80,16 @@ class Surveys extends React.Component {
 
 }
 
-onChangeSchema(event) {
+  onChangeSchema(event) {
+    this.setState({schemaValue: event.target.value})
+  }
 
-  this.setState({schemaValue: event.target.value})
-
-
-}
-
-onChangeForm(event) {
-
-  this.setState({formValue: event.target.value})
-
-}
+  onChangeForm(event) {
+    this.setState({formValue: event.target.value})
+  }
 
   _onChange() {
-
-        this.setState({schema: JSON.parse(this.state.schemaValue), form: JSON.parse(this.state.formValue)});
+      this.setState({schema: JSON.parse(this.state.schemaValue), form: JSON.parse(this.state.formValue)});
   }
 
 
@@ -124,7 +118,7 @@ onChangeForm(event) {
       <SchemaForm schema={this.state.schema} form={this.state.form} model={this.props.model} onModelChange={this.props.onModelChange} /> : null}*/}
 
       <div id="container">
-     
+
              {this.props.children}
            </div>
 </div>

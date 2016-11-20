@@ -1,5 +1,5 @@
 import React from 'react'
-import Formsy, { HOC } from 'formsy-react'
+import Formsy from 'formsy-react'
 import Relay from 'react-relay'
 import TextField from 'material-ui/TextField';
 import FormsyText from './FormsyText'
@@ -12,14 +12,14 @@ class LoginComponent extends React.Component {
   state = { canSubmit: false }
 
   constructor(props) {
+    console.log(props);
     super(props);
   }
 
 
   login (user, model) {
-    console.log(user);
-    console.log(model);
     const self = this;
+    model.username = 'mapleman';
 
     Relay.Store.commitUpdate(
       new LoginMutation({
@@ -46,6 +46,9 @@ class LoginComponent extends React.Component {
         },
         onSuccess: (response) => {
           console.log("success");
+          console.log(response);
+          console.log(this.props);
+          console.log(this.state);
           self.props.location.state ? self.context.router.push({}, self.props.location.state.previousPath) : self.context.router.goBack();
         }
       }
@@ -63,7 +66,7 @@ class LoginComponent extends React.Component {
 
        <Formsy.Form
          ref="form"
-         onSubmit={(model) => this.login(this.props.viewer.users.edges[0].node, model)}
+         onSubmit={(model) => this.login(this.props.viewer, model)}
          className={styles.form} >
 
          <FormsyText
@@ -95,26 +98,16 @@ class LoginComponent extends React.Component {
 
 
 
-
 const Login = Relay.createContainer(LoginComponent, {
 
   fragments: {
       viewer: () => Relay.QL`
-      fragment on SurveyQuery {
-        user {
-           id
-           token
+        fragment on SurveyQuery {
            ${LoginMutation.getFragment('user')}
-        }
-        users(first: 1) {
-          edges {
-            node {
-              id
-            }
-          }
-        }
+
       }
   `,
+
 
   }
 });
