@@ -22,11 +22,12 @@
     "css-loader": "^0.25.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
+    "formsy-material-ui": "^0.5.2",
     "formsy-react": "^0.18.1",
     "graphql": "^0.7.2",
     "graphql-relay": "^0.4.3",
     "immutability-helper": "^2.0.0",
-    "material-ui": "^0.15.0",
+    "material-ui": "^0.16.4",
     "node-sass": "^3.11.2",
     "numeral": "^1.5.3",
     "postcss-loader": "^1.1.0",
@@ -43,6 +44,7 @@
     "react-router": "^2.8.1",
     "react-router-relay": "^0.13.5",
     "react-schema-form": "^0.2.10",
+    "react-svg-gauge": "^1.0.4",
     "react-tap-event-plugin": "^1.0.0",
     "roboto-fontface": "^0.6.0",
     "sass-lint": "^1.10.0",
@@ -53,6 +55,7 @@
     "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
+    "formsy-material-ui": "^0.5.3",
     "material-ui": "^0.16.3",
     "react-tap-event-plugin": "^2.0.1",
     "roboto-fontface": "^0.6.0"

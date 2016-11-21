@@ -6,6 +6,7 @@ import FormsyText from './FormsyText'
 import RaisedButton from 'material-ui/RaisedButton'
 import styles from './login.css';
 import LoginMutation from './Mutations/LoginMutation'
+import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
 
 
 class LoginComponent extends React.Component {
@@ -45,11 +46,10 @@ class LoginComponent extends React.Component {
           this.refs.form.updateInputsWithError(formError);
         },
         onSuccess: (response) => {
-          console.log("success");
-          console.log(response);
-          console.log(this.props);
-          console.log(this.state);
-          self.props.location.state ? self.context.router.push({}, self.props.location.state.previousPath) : self.context.router.goBack();
+
+          localStorage.token = response.loginUser.user.token;
+          console.log(self.props);
+          self.props.location.state ? browserHistory.push("/") :  browserHistory.goBack();
         }
       }
     );
@@ -66,7 +66,7 @@ class LoginComponent extends React.Component {
 
        <Formsy.Form
          ref="form"
-         onSubmit={(model) => this.login(this.props.viewer, model)}
+         onSubmit={(model) => this.login(this.props.viewer.user, model)}
          className={styles.form} >
 
          <FormsyText
@@ -101,10 +101,12 @@ class LoginComponent extends React.Component {
 const Login = Relay.createContainer(LoginComponent, {
 
   fragments: {
-      viewer: () => Relay.QL`
+      viewer:  () => Relay.QL`
         fragment on SurveyQuery {
-           ${LoginMutation.getFragment('user')}
 
+          user {
+           ${LoginMutation.getFragment('user')}
+         }
       }
   `,
 

@@ -6,20 +6,17 @@ import { createHashHistory } from 'history';
 import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
 import useRelay from 'react-router-relay'
 
-
+import auth from './auth'
 import App from './app'
 
 
 function requireAuth(nextState, replace) {
-    /*if (!auth.loggedIn()) {
+    if (!auth.loggedIn()) {
         replace({
-            pathname:'/app/login/',
-            state: {nextPathname: '/app/'}
+            pathname:'/login',
+            state: {nextPathname: '/'}
         })
-    }*/
-    console.log(nextState, replace);
-
-
+    }
 }
 
 
@@ -27,7 +24,7 @@ Relay.injectNetworkLayer(
    new Relay.DefaultNetworkLayer('/graphql', {
      get headers() {
        return {
-         Authorization: 'Bearer ' + localStorage.getItem('id_token')
+         Authorization: 'Bearer ' + localStorage.token
        }
      }
    })
@@ -49,7 +46,7 @@ const AppQueries = {
 class Dashboard extends React.Component {
           render() {
             return(<div>
-              <li>o<Link to="login">Login</Link>o</li>
+              {localStorage.token ? <li>o<Link to="logout">Logout</Link>o</li> : <li>o<Link to="login">Login</Link>o</li>}
             Welcome to the app!</div>)
           }
         }
@@ -97,9 +94,10 @@ ReactDOM.render(
       environment={Relay.Store}
       history={browserHistory}
       render={applyRouterMiddleware(useRelay)}>
-            <Route path="/" component={App} onEnter={requireAuth} queries={AppQueries}>
-              <IndexRoute component={DashboardRelay} queries={AppQueries}/>
+            <Route path="/" component={App} queries={AppQueries}>
+              <IndexRoute component={DashboardRelay} onEnter={requireAuth} queries={AppQueries}/>
               <Route path="login" component={Login} queries={AppQueries}/>
+              <Route path="logout" component={(() => (delete localStorage.token && null))}/>
             </Route>
        </Router>,
       document.getElementById('react-app'))
