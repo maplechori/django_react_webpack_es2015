@@ -5,6 +5,7 @@ import Login   from './login.js'
 import { createHashHistory } from 'history';
 import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
 import useRelay from 'react-router-relay'
+import Gauge from 'react-svg-gauge';
 
 import auth from './auth'
 import App from './app'
@@ -47,7 +48,9 @@ class Dashboard extends React.Component {
           render() {
             return(<div>
               {localStorage.token ? <li>o<Link to="logout">Logout</Link>o</li> : <li>o<Link to="login">Login</Link>o</li>}
-            Welcome to the app!</div>)
+            Welcome to the app!
+  <Gauge value={65} color='#00ff00' width={200} height={120} label="" />
+            </div>)
           }
         }
 
