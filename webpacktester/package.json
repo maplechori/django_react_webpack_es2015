@@ -50,6 +50,7 @@
     "react-schema-form": "^0.2.10",
     "react-svg-gauge": "^1.0.4",
     "react-tap-event-plugin": "^1.0.0",
+    "relay-decorators": "^0.2.0",
     "roboto-fontface": "^0.6.0",
     "sass-lint": "^1.10.0",
     "sass-loader": "^4.0.2",
