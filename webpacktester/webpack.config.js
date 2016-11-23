@@ -29,7 +29,11 @@ module.exports = {
         {
          test: /\.(eot|woff|woff2|svg|ttf)([\?]?.*)$/,
          loader: "file-loader"
-       }
+       },
+       { test: /\.styl$/,
+         loader: 'style-loader!css-loader!stylus-loader'
+       },
+
     ],
   },
   devtool: "inline- source-map",

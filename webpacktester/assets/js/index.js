@@ -49,14 +49,16 @@ class Dashboard extends React.Component {
             return(<div>
               {localStorage.token ? <li>o<Link to="logout">Logout</Link>o</li> : <li>o<Link to="login">Login</Link>o</li>}
             Welcome to the app!
+            <br/>
+            <br/>
             <div className="box">
-                      <Gauge value={15}
+                      <Gauge value={35}
                              size={20}
                              radius={100}
                              sections={["#8cc152", "#ffb74d", "#ffb74d", "#e84528", "#e84528", "#e84528"]}
                              arrow={{height: 60, width: 6, color: "#ccc"}}
                              legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
-                             label="15%"/>
+                             label="35%"/>
                     </div>
 
             </div>)

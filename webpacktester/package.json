@@ -36,6 +36,7 @@
     "react": "^15.3.2",
     "react-addons-create-fragment": "^15.3.2",
     "react-addons-css-transition-group": "^15.3.2",
+    "react-d3-components": "^0.6.5",
     "react-datagrid": "^2.1.1",
     "react-dazzle": "^1.2.3",
     "react-dom": "^15.3.2",
@@ -53,6 +54,8 @@
     "sass-lint": "^1.10.0",
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^2.3.1",
     "webpack": "^1.13.3",
     "webpack-bundle-tracker": "0.0.93",
     "webpack-dev-server": "^1.16.2"

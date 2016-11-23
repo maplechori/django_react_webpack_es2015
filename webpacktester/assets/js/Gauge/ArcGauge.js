@@ -1,7 +1,7 @@
 import React from 'react'
 import * as d3 from 'd3'
 import ReactDOM from 'react-dom'
-import Faux from 'react-faux-dom'
+import './GaugeCSS.styl'
 
 let ArcGauge = React.createClass({
   getDefaultProps() {
@@ -66,8 +66,6 @@ let ArcGauge = React.createClass({
         arcStart, arcEnd, padStart, padEnd;
 
     // Draw svg
-    console.log(d3);
-    console.log(d3.arc);
     let arc = d3.arc()
         .startAngle(this._deg2rad(-80))
         .endAngle(this._deg2rad(80))
@@ -78,6 +76,7 @@ let ArcGauge = React.createClass({
         .attr("height", height)
         .append("g")
         .attr("transform", "translate(" + width / 2 + "," + height + ")");
+
 
     var meter = svg.append("g")
         .attr("class", "progress-meter");
@@ -117,6 +116,7 @@ let ArcGauge = React.createClass({
     });
 
     // Label
+   
     if (this.props.label) {
       let text = meter.append("text")
           .attr("class", "gauge-label")
@@ -126,6 +126,7 @@ let ArcGauge = React.createClass({
 
       text.text(value + '%');
     }
+
 
     // Draw and animate arrow with default or provided styles
     this._drawArrow(meter, 0, arrow.color, arrow.width, arrow.height);
@@ -140,12 +141,13 @@ let ArcGauge = React.createClass({
     var scope = this;
     return el.transition()
         .delay(500)
-        .ease('elastic')
+        .ease(d3.easeElastic)
         .duration(4000)
         .selectAll('.gauge-arrow')
         .tween('progress', () => {
           return function(percentOfPercent) {
-            return d3.select(this)
+
+            return d3.select('.gauge-arrow')
                 .attr('d', scope._mkCmd(width, height, percentOfPercent * perc));
           };
         });

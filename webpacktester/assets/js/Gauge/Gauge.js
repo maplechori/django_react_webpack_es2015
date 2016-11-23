@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import * as d3 from 'd3'
-import Faux from 'react-faux-dom'
 
 
 var ArcGauge = require('./ArcGauge');
@@ -11,7 +10,7 @@ var ArcGauge = require('./ArcGauge');
 let Gauge = React.createClass({
   getDefaultProps() {
     return {
-      value: 0,
+      value: 36 ,
       size: 15,
       radius: 85,
       sections: ['#ccc', '#999', '#444'],
@@ -60,6 +59,7 @@ let Gauge = React.createClass({
 
   render() {
     let cls = 'gauge';
+
     return (
         <section className={cls}>
           <ArcGauge value={this.props.value}
