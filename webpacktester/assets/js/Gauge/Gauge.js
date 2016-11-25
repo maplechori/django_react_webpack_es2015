@@ -37,6 +37,7 @@ let Gauge = React.createClass({
   },
 
   componentDidMount() {
+
     this.setState({
       width: ReactDOM.findDOMNode(this).offsetWidth
     })

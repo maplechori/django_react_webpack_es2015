@@ -4,7 +4,7 @@ import Relay from 'react-relay'
 import TextField from 'material-ui/TextField';
 import FormsyText from './FormsyText'
 import RaisedButton from 'material-ui/RaisedButton'
-import styles from './login.css';
+import styles from './theme/login.css';
 import LoginMutation from './Mutations/LoginMutation'
 import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
 

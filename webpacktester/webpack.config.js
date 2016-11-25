@@ -19,7 +19,8 @@ module.exports = {
         loader: 'babel-loader',
         query:
           {
-            presets:[ 'es2015','stage-1', 'react', {"plugins": ["./babelRelayPlugin"]} ]
+               plugins: ['transform-decorators-legacy' ],
+            presets:[ 'es2015','stage-1', 'react', {"plugins": ["./babelRelayPlugin"], } ]
           }
       }, // to transform JSX into JS
       {
@@ -47,6 +48,7 @@ module.exports = {
     extensions:['', '.scss', '.css', '.js', '.json', '.jsx'],
   },
   plugins: [
+     
     new ExtractTextPlugin('bundle.css', { allChunks: true }),
     new webpack.HotModuleReplacementPlugin(),
     new BundleTracker({filename: './webpack-stats.json'}),

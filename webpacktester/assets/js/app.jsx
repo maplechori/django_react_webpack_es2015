@@ -7,6 +7,7 @@ import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColu
 import TextField from 'material-ui/TextField'
 import { SchemaForm } from 'react-schema-form'
 import RaisedButton from 'material-ui/RaisedButton'
+
 const tableHeaders =
 [
   { alias: 'Identification', sortable: true, dataAlias: 'id', format: { type: 'status' } },
@@ -23,7 +24,7 @@ class Surveys extends React.Component {
     this._onChange = this._onChange.bind(this);
     this.onChangeSchema = this.onChangeSchema.bind(this);
     this.onChangeForm = this.onChangeForm.bind(this);
-}
+  }
 
   requireAuth() {
 
@@ -98,14 +99,15 @@ class Surveys extends React.Component {
     return (<div>
     <MuiThemeProvider>
       <div>
-        <SmartTable { ...{ tableHeaders, data: this.props.viewer.sections,
+        {/*<SmartTable { ...{ tableHeaders, data: this.props.viewer.sections,
                           limit: 10, false, relay: this.props.relay, onRowSelection: this.handleSelection,
-                          totalPages: Math.ceil(this.props.viewer.sections.edges[0].node.totalCount/10) } } />
+                          totalPages: Math.ceil(this.props.viewer.sections.edges[0].node.totalCount/10) } } />*/}
 
         {/*<TextField id="schemaID" value={this.state.schemaValue}
    multiLine={true} onChange={this.onChangeSchema}
    rows={5}
    rowsMax={500}/>
+
 
   <TextField id="formID" value={this.state.formValue}
    multiLine={true} onChange={this.onChangeForm}
@@ -117,11 +119,12 @@ class Surveys extends React.Component {
    {this.state.schema ?
       <SchemaForm schema={this.state.schema} form={this.state.form} model={this.props.model} onModelChange={this.props.onModelChange} /> : null}*/}
 
+
       <div id="container">
 
              {this.props.children}
            </div>
-</div>
+    </div>
       </MuiThemeProvider>
    </div>)
   }

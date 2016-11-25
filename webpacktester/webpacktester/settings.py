@@ -60,6 +60,10 @@ GRAPHENE = {
     )
 }
 
+#GRATH_AUTH = {
+#    'USER_FIELDS' :
+#}
+
 # Application definition
 
 INSTALLED_APPS = [

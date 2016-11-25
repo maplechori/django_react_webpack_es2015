@@ -47,7 +47,7 @@ let ArcGauge = React.createClass({
   renderArcGauge() {
     const el = ReactDOM.findDOMNode(this);
     const {value, width} = this.props;
-    const height = width / 2;
+    const height = width / 6;
 
     while (el.firstChild) {
       el.removeChild(el.firstChild);
@@ -116,7 +116,7 @@ let ArcGauge = React.createClass({
     });
 
     // Label
-   
+
     if (this.props.label) {
       let text = meter.append("text")
           .attr("class", "gauge-label")
@@ -131,7 +131,6 @@ let ArcGauge = React.createClass({
     // Draw and animate arrow with default or provided styles
     this._drawArrow(meter, 0, arrow.color, arrow.width, arrow.height);
     this._animateArrow(meter, value * 0.01, arrow.width, arrow.height);
-
     meter.transition();
 
     return meter;
@@ -143,14 +142,16 @@ let ArcGauge = React.createClass({
         .delay(500)
         .ease(d3.easeElastic)
         .duration(4000)
-        .selectAll('.gauge-arrow')
-        .tween('progress', () => {
-          return function(percentOfPercent) {
+        .selectAll('.gauge-arrow').each(function()  {
+              let item = this;
+              d3.select(item).transition().ease(d3.easeElastic).duration(4000).tween('progress', function()
+              {
+                  return function(percentOfPercent) {
+                  d3.select(item).attr('d', scope._mkCmd(width, height, percentOfPercent * perc));
+              }
+          });
+          });
 
-            return d3.select('.gauge-arrow')
-                .attr('d', scope._mkCmd(width, height, percentOfPercent * perc));
-          };
-        });
   },
 
   _drawArrow(el, perc, color, width, height) {
