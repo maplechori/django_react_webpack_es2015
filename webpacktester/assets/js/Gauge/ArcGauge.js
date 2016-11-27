@@ -150,7 +150,7 @@ let ArcGauge = React.createClass({
                   d3.select(item).attr('d', scope._mkCmd(width, height, percentOfPercent * perc));
               }
           });
-          });
+        });
 
   },
 

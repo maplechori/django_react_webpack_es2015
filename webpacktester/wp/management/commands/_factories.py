@@ -1,6 +1,8 @@
 
 import datetime
 import factory
+from factory.fuzzy import FuzzyChoice
+from wp.models import Question
 import random
 
 from wp.models import Survey
@@ -21,6 +23,15 @@ class QuestionFactory(factory.django.DjangoModelFactory):
         model = Question
 
     name = factory.Sequence(lambda n: "question_%s" % n)
+    question_type = factory.fuzzy.FuzzyChoice(Question.QUESTION_CHOICES)
+
+    @factory.post_generation
+    def section(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for section in extracted:
+                self.section.add(section)
 
 
 class SectionFactory(factory.django.DjangoModelFactory):

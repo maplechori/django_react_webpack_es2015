@@ -24,4 +24,6 @@ class Command(BaseCommand):
         for i in range(0, random.randrange(50, 250)):
             _factories.SectionFactory.create(survey=set(random.sample(set(Survey.objects.all()), 2)))
 
+        
+
         self.stdout.write(self.style.SUCCESS('Successfully loaded factory data'))

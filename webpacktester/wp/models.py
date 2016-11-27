@@ -1,12 +1,15 @@
 from django.db import models
 
-QUESTION_TYPE = (
-    ('NI', 'No input'),
-    ('ST', 'String'),
-    ('RA', 'Radios'),
-    ('DD', 'Drop Down'),
-    ('CK', 'CheckBoxes')
+STRING = 'string'
+NOINPUT = 'noinput'
+RADIO = 'radio'
+
+QUESTION_CHOICES = (
+    (STRING, 'String'),
+    (NOINPUT, 'No Input'),
+    (RADIO, 'Radio')
 )
+
 
 # Create your models here.
 class Survey(models.Model):
@@ -17,10 +20,12 @@ class Survey(models.Model):
 
 
 class Question(models.Model):
+
     name = models.CharField(max_length=50)
     question_text = models.TextField()
-    question_type = models.CharField(max_length=20, choices=QUESTION_TYPE, default='NI')
+    question_type = models.CharField(max_length=1, choices=QUESTION_CHOICES, default=STRING)
     data_label = models.CharField(max_length=50)
+
 
     def __str__(self):
         return self.name

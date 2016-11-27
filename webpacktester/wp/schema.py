@@ -1,16 +1,16 @@
 from graphene import relay, ObjectType, AbstractType, resolve_only_args
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
-import django_filters
 from .models import Survey as SurveyModel
 from .models import Section as SectionModel
 from .models import Question as QuestionModel
 from django.contrib.auth.models import User as UserModel
-
 from graphene_django.debug import DjangoDebug
 
+import django_filters
 import graph_auth.schema
 import graphene
+from ast import literal_eval
 
 def connection_for_type(_type):
     class Connection(graphene.Connection):
@@ -36,30 +36,24 @@ class Survey(DjangoObjectType):
     def to_global_id(type, id):
         return '{}:{}'.format(type, id)
 
-
 class SectionFilter(django_filters.FilterSet):
     # Do case-insensitive lookups on 'name'
     name = django_filters.CharFilter(lookup_type='icontains')
 
-
     class Meta:
         model = SectionModel
         fields = ['name']
-        filter_order_by = True
-
-
+        #filter_order_by = True
 
 class Section(DjangoObjectType):
     class Meta:
         model = SectionModel
         interfaces = (relay.Node,)
         filter_fields = ['name'] #{ 'name' : ['exact', 'icontains']}
-        filter_order_by = True
+        #filter_order_by = True
 
     totalCount = graphene.Int()
     completedCount = graphene.Int()
-
-
 
     @staticmethod
     def resolve_totalCount(self, args, context, info):
@@ -69,16 +63,22 @@ class Section(DjangoObjectType):
     def resolve_completedCount(self, args, context, info):
         return SectionModel.objects.filter(completed=True).count()
 
-
 #Section.Connection = connection_for_type(Section)
-
-
-
 class Question(DjangoObjectType):
+
     class Meta:
         model = QuestionModel
         interfaces = (relay.Node,)
         filter_fields = { 'name' : ['exact', 'icontains']}
+
+    question_type = graphene.String()
+    #question_type = graphene.Enum(('ST', '2'))
+
+
+    @classmethod
+    def resolve_question_type(self, args, context, info, extra):
+        print(args.question_type)
+        return literal_eval(args.question_type)[0]
 
     @staticmethod
     def to_global_id(type, id):
