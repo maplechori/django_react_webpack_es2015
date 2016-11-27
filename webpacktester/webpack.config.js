@@ -19,7 +19,7 @@ module.exports = {
         loader: 'babel-loader',
         query:
           {
-               plugins: ['transform-decorators-legacy' ],
+            plugins: ['transform-decorators-legacy' ],
             presets:[ 'es2015','stage-1', 'react', {"plugins": ["./babelRelayPlugin"], } ]
           }
       }, // to transform JSX into JS
@@ -37,7 +37,7 @@ module.exports = {
 
     ],
   },
-  devtool: "inline- source-map",
+  devtool: "inline-source-map",
   postcss: [autoprefixer],
   sassLoader: {
        data: '@import "theme/_config.scss";',
@@ -48,7 +48,7 @@ module.exports = {
     extensions:['', '.scss', '.css', '.js', '.json', '.jsx'],
   },
   plugins: [
-     
+
     new ExtractTextPlugin('bundle.css', { allChunks: true }),
     new webpack.HotModuleReplacementPlugin(),
     new BundleTracker({filename: './webpack-stats.json'}),

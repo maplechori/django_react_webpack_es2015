@@ -72,6 +72,8 @@ class Section(DjangoObjectType):
 
 #Section.Connection = connection_for_type(Section)
 
+
+
 class Question(DjangoObjectType):
     class Meta:
         model = QuestionModel
@@ -82,6 +84,24 @@ class Question(DjangoObjectType):
     def to_global_id(type, id):
         return '{}:{}'.format(type, id)
 
+class AddQuestionMutation(relay.ClientIDMutation):
+    class Input:
+        name = graphene.String(required=True)
+        question_type = graphene.String(required=True)
+        data_label = graphene.String(required=True)
+        question_text = graphene.String(required=True)
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, context, info):
+
+        question = QuestionModel()
+        question.question_type = input.get('question_type')
+        question.name = input.get('name')
+        question.data_label = input.get('data_label')
+        question.question_text = input.get('question_text')
+        question.save()
+
+        return AddQuestionMutation(question=question)
 
 class SurveyMutation(graph_auth.schema.Mutation, graphene.ObjectType, AbstractType):
     pass

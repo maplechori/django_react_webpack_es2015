@@ -7,7 +7,7 @@ import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link 
 import useRelay from 'react-router-relay'
 import Dashboard from 'react-dazzle';
 import poll from 'relay-decorators/lib/poll';
-
+import Question from './QuestionCrud.js'
 import Gauge from './Gauge/Gauge.js';
 
 import auth from './auth'
@@ -54,7 +54,8 @@ class Dashboard2 extends React.Component {
           render() {
             return(<div>
               {localStorage.token ? <li><Link to="logout">Logout</Link></li> : <li><Link to="login">Login</Link></li>}
-              <div style={{textAlign: 'center'}}>
+
+              <div style={{textAlign: 'center', marginTop: '50px'}}>
 
               <div className="gauge-box">
                       <Gauge value={90}
@@ -66,16 +67,27 @@ class Dashboard2 extends React.Component {
                              label="90%"/>
                              </div>
                              <div className="gauge-box">
-                             <Gauge value={35}
-                                    size={10}
-                                    radius={100}
-                                    width={20}
-                                    sections={["#8cc152", "#ffb74d", "#ffb74d", "#e84528", "#e84528", "#e84528"]}
-                                    arrow={{height: 60, width: 6, color: "#ccc"}}
-                                    legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
-                                    label="35%"/>
+                     <Gauge value={35}
+                            size={10}
+                            radius={100}
+                            width={20}
+                            sections={["#8cc152", "#ffb74d", "#ffb74d", "#e84528", "#e84528", "#e84528"]}
+                            arrow={{height: 60, width: 6, color: "#ccc"}}
+                            legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
+                            label="35%"/>
                     </div>
+                    <div className="gauge-box">
+                      <Gauge value={75}
+                             size={10}
+                             radius={100}
+                             width={20}
+                             sections={["#8cc152", "#ffb74d", "#ffb74d", "#e84528", "#e84528", "#e84528"]}
+                             arrow={{height: 60, width: 6, color: "#ccc"}}
+                             legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
+                             label="35%"/>
+                     </div>
 
+                     <Question/>
                     </div>
             </div>)
           }
