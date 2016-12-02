@@ -24,25 +24,7 @@ class Question(models.Model):
     ]
     question_type = models.PositiveSmallIntegerField(choices=QUESTION_CHOICES, default=3)
     data_label = models.CharField(max_length=50)
-    STATES = [
-        (1, 'Initiate'),
-        (2, "Brief"),
-        (3, "Planning"),
-        (4, "Price Negotiate"),
-        (5, "Executing"),
-        (6, "Pending"),
-        (7, "Completed"),
-        (8, "Canceled"),
-        (9, "Failed"),
-        (10, "Paid"),
-    ]
-
-
-    state = models.PositiveSmallIntegerField(
-        choices=STATES,
-        default=1
-    )
-
+    
     def __str__(self):
         return self.name
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import Relay from 'react-relay'
 import Formsy from 'formsy-react';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -69,13 +70,12 @@ class QuestionComponent extends React.Component {
            onValidSubmit={this.submitForm}
            onInvalidSubmit={this.notifyFormError}
          >
-
            <FormsyText
              name="name"
              validations="isWords"
              validationError={wordsError}
              required
-             hintText="Quetion name"
+             hintText="Question name"
              floatingLabelText="Question name"
            />
            <FormsyText
@@ -90,12 +90,11 @@ class QuestionComponent extends React.Component {
              required
              floatingLabelText="Question Type"
            >
-              {this.props.viewer.edges[0].node.questionType}
-             <MenuItem value={'NI'} primaryText="No Input" />
-             <MenuItem value={'ST'} primaryText="String" />
-             <MenuItem value={'RA'} primaryText="Radios" />
-             <MenuItem value={'DD'} primaryText="Drop down" />
-             <MenuItem value={'CK'} primaryText="Multiple Selection" />
+           {
+             (this.props.types.enumValues.map((n, i) => (
+                    <MenuItem key={i} value={n.name.substring(2)} primaryText={n.description}/>
+                  )))
+           }
 
            </FormsySelect>
 
@@ -125,16 +124,5 @@ class QuestionComponent extends React.Component {
 export default Relay.createContainer(QuestionComponent, {
 
   fragments: {
-      viewer: () => Relay.QL`
-         fragment on SurveyQuery {
-            questions(first: 1) {
-              edges {
-                node {
-                  id
-                  questionType
-                }
-              }
-            }
-         }`,
        }
 });

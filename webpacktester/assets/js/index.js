@@ -40,12 +40,21 @@ Relay.injectNetworkLayer(
 const AppQueries = {
 
           viewer: (Component) => Relay.QL`
+
               query {
                 viewer {
                     ${Component.getFragment('viewer')}
                     }
+
+
             }`,
-        };
+             qtype: (Component) => Relay.QL`
+                    query {
+                      __type(name:"QuestionQuestionType") {
+                        ${Component.getFragment('qtype')}
+                      }
+                    }`,
+              };
 
 class Dashboard2 extends React.Component {
 
@@ -87,7 +96,7 @@ class Dashboard2 extends React.Component {
                              label="35%"/>
                      </div>
 
-                     <Question/>
+                     <Question viewer={this.props.viewer} types={this.props.qtype}/>
                     </div>
             </div>)
           }
@@ -100,12 +109,16 @@ const DashboardRelay = Relay.createContainer(Dashboard2, {
     },
 
     fragments: {
+      qtype: () => Relay.QL`
+         fragment on __Type {
+              enumValues { name description }
+         } `,
+
       viewer: () => Relay.QL`
          fragment on SurveyQuery {
               sections( first: $pageSize, after: $cursor,  ) {
                        edges {
                          node {
-                           totalCount
                             id
                             name
                             survey(first: $pageSize) {

@@ -139,6 +139,12 @@ export default Relay.createContainer(Surveys, {
     },
 
  fragments: {
+   qtype: () => Relay.QL`
+      fragment on __Type {
+           enumValues { name description }
+      } `,
+      
+
      viewer: () => Relay.QL`
         fragment on SurveyQuery {
 
