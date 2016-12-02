@@ -79,15 +79,18 @@ class Question(DjangoObjectType):
     #    return literal_eval(args.question_type)[0]
 
 class AddQuestion(relay.ClientIDMutation):
+
     class Input:
         name = graphene.String(required=True)
-        question_type = graphene.String(required=True)
+        question_type = graphene.Int(required=True)
         data_label = graphene.String(required=True)
-        question_text = graphene.Int(required=True)
+        question_text = graphene.String(required=True)
+
+    question = graphene.Field(Question)
+    ok = graphene.Boolean()
 
     @classmethod
     def mutate_and_get_payload(cls, input, context, info):
-
         question = QuestionModel()
         question.question_type = input.get('question_type')
         question.name = input.get('name')
@@ -95,12 +98,10 @@ class AddQuestion(relay.ClientIDMutation):
         question.question_text = input.get('question_text')
         question.save()
 
-        return AddQuestionMutation(question=question)
+        return AddQuestion(question=question, ok=True)
 
 class SurveyMutation(graph_auth.schema.Mutation, graphene.ObjectType, AbstractType):
     add_question = AddQuestion.Field()
-
-
 
 class SurveyQuery(graph_auth.schema.Query, graphene.ObjectType, AbstractType):
     node = relay.Node.Field()

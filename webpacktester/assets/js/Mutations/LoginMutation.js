@@ -43,7 +43,6 @@ class LoginMutation extends Relay.Mutation {
   }
 
   getFatQuery () {
-    console.log('wee');
     return Relay.QL`
       fragment on LoginUserPayload {
         user {

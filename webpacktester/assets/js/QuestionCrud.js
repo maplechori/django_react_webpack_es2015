@@ -6,6 +6,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
 import MenuItem from 'material-ui/MenuItem';
+import PieChart from 'react-d3-components/lib/PieChart'
+import AddQuestionMutation from './Mutations/AddQuestionMutation'
 
 import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
         FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
@@ -17,6 +19,7 @@ class QuestionComponent extends React.Component {
     constructor(props) {
           super(props);
     }
+
 
     errorMessages = {
       wordsError: 'Please only use letters',
@@ -50,9 +53,20 @@ class QuestionComponent extends React.Component {
 
     }
 
-    submitForm(data) {
-      alert(JSON.stringify(data, null, 4));
+    submitForm(viewer, data) {
+      console.log(data);
+
+      Relay.Store.commitUpdate(
+        new AddQuestionMutation({
+          question: viewer,
+          name: data.name,
+          questionType: data.question_type,
+          questionText: data.question_text,
+          dataLabel: data.data_label
+        }))
+
     }
+
 
 
     render() {
@@ -67,7 +81,7 @@ class QuestionComponent extends React.Component {
          <Formsy.Form
            onValid={this.enableButton}
            onInvalid={this.disableButton}
-           onValidSubmit={this.submitForm}
+           onValidSubmit={(data) => this.submitForm(this.props.viewer, data)}
            onInvalidSubmit={this.notifyFormError}
          >
            <FormsyText
@@ -124,5 +138,6 @@ class QuestionComponent extends React.Component {
 export default Relay.createContainer(QuestionComponent, {
 
   fragments: {
+
        }
 });
