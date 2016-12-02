@@ -10,7 +10,6 @@ from graphene_django.debug import DjangoDebug
 import django_filters
 import graph_auth.schema
 import graphene
-from ast import literal_eval
 
 def connection_for_type(_type):
     class Connection(graphene.Connection):
@@ -71,25 +70,20 @@ class Question(DjangoObjectType):
         interfaces = (relay.Node,)
         filter_fields = { 'name' : ['exact', 'icontains']}
 
-    question_type = graphene.String()
-    #question_type = graphene.Enum(('ST', '2'))
+    #question_type = graphene.String()
+    #question_type = graphene.Field(QuestionType)
 
+    #@classmethod
+    #def resolve_question_type(self, args, context, info, extra):
+    #    print(args.question_type)
+    #    return literal_eval(args.question_type)[0]
 
-    @classmethod
-    def resolve_question_type(self, args, context, info, extra):
-        print(args.question_type)
-        return literal_eval(args.question_type)[0]
-
-    @staticmethod
-    def to_global_id(type, id):
-        return '{}:{}'.format(type, id)
-
-class AddQuestionMutation(relay.ClientIDMutation):
+class AddQuestion(relay.ClientIDMutation):
     class Input:
         name = graphene.String(required=True)
         question_type = graphene.String(required=True)
         data_label = graphene.String(required=True)
-        question_text = graphene.String(required=True)
+        question_text = graphene.Int(required=True)
 
     @classmethod
     def mutate_and_get_payload(cls, input, context, info):
@@ -104,7 +98,7 @@ class AddQuestionMutation(relay.ClientIDMutation):
         return AddQuestionMutation(question=question)
 
 class SurveyMutation(graph_auth.schema.Mutation, graphene.ObjectType, AbstractType):
-    pass
+    add_question = AddQuestion.Field()
 
 
 

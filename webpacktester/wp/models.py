@@ -1,14 +1,6 @@
 from django.db import models
 
-STRING = 'string'
-NOINPUT = 'noinput'
-RADIO = 'radio'
 
-QUESTION_CHOICES = (
-    (STRING, 'String'),
-    (NOINPUT, 'No Input'),
-    (RADIO, 'Radio')
-)
 
 
 # Create your models here.
@@ -23,9 +15,33 @@ class Question(models.Model):
 
     name = models.CharField(max_length=50)
     question_text = models.TextField()
-    question_type = models.CharField(max_length=1, choices=QUESTION_CHOICES, default=STRING)
-    data_label = models.CharField(max_length=50)
 
+    QUESTION_CHOICES = [
+        (1, 'Checkbox'),
+        (2, 'String'),
+        (3, 'No Input'),
+        (4, 'Radio')
+    ]
+    question_type = models.PositiveSmallIntegerField(choices=QUESTION_CHOICES, default=3)
+    data_label = models.CharField(max_length=50)
+    STATES = [
+        (1, 'Initiate'),
+        (2, "Brief"),
+        (3, "Planning"),
+        (4, "Price Negotiate"),
+        (5, "Executing"),
+        (6, "Pending"),
+        (7, "Completed"),
+        (8, "Canceled"),
+        (9, "Failed"),
+        (10, "Paid"),
+    ]
+
+
+    state = models.PositiveSmallIntegerField(
+        choices=STATES,
+        default=1
+    )
 
     def __str__(self):
         return self.name

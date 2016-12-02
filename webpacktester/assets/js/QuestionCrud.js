@@ -10,7 +10,7 @@ import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
         FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
 
 
-class Question extends React.Component {
+class QuestionComponent extends React.Component {
     state = {canSubmit: false}
 
     constructor(props) {
@@ -90,6 +90,7 @@ class Question extends React.Component {
              required
              floatingLabelText="Question Type"
            >
+              {this.props.viewer.edges[0].node.questionType}
              <MenuItem value={'NI'} primaryText="No Input" />
              <MenuItem value={'ST'} primaryText="String" />
              <MenuItem value={'RA'} primaryText="Radios" />
@@ -121,4 +122,19 @@ class Question extends React.Component {
 }
 
 
-export default Question;
+export default Relay.createContainer(QuestionComponent, {
+
+  fragments: {
+      viewer: () => Relay.QL`
+         fragment on SurveyQuery {
+            questions(first: 1) {
+              edges {
+                node {
+                  id
+                  questionType
+                }
+              }
+            }
+         }`,
+       }
+});
