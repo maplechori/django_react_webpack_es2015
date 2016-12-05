@@ -8,13 +8,15 @@ import RaisedButton from 'material-ui/RaisedButton';
 import MenuItem from 'material-ui/MenuItem';
 import PieChart from 'react-d3-components/lib/PieChart'
 import AddQuestionMutation from './Mutations/AddQuestionMutation'
+import DeleteQuestionMutation from './Mutations/DeleteQuestionMutation'
+
 
 import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
         FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
 
 
 class QuestionComponent extends React.Component {
-    state = {canSubmit: false}
+    state = {canSubmit: false, update: false}
 
     constructor(props) {
           super(props);
@@ -53,31 +55,49 @@ class QuestionComponent extends React.Component {
 
     }
 
-    submitForm(viewer, data) {
-      console.log(data);
+    submitForm = (viewer, data) => {
 
       Relay.Store.commitUpdate(
         new AddQuestionMutation({
-          question: viewer,
+
+          viewer: viewer,
           name: data.name,
           questionType: data.question_type,
           questionText: data.question_text,
           dataLabel: data.data_label
-        }))
+        }),
+        {
+          onSuccess: (response) => {
+            console.log(response);
 
+          }
+        });
+           this.setState({canSubmit: false});
     }
 
 
 
     render() {
       let {paperStyle, switchStyle, submitStyle } = this.styles;
-
       let { wordsError, numericError, urlError } = this.errorMessages;
 
    return (
 
      <MuiThemeProvider muiTheme={getMuiTheme()}>
        <Paper style={paperStyle}>
+        <div>
+        <ul>
+
+          { this.props.viewer.questions.edges.map((row, index) => {
+                  return (
+                    <li key={row.node.id}>
+                    {row.node.name}
+                    <button className="destroy" onClick={() => Relay.Store.commitUpdate(new DeleteQuestionMutation({viewer: this.props.viewer, question: row.node}))} />
+                    </li>
+                  )
+         })}
+         </ul>
+        </div>
          <Formsy.Form
            onValid={this.enableButton}
            onInvalid={this.disableButton}
@@ -136,8 +156,24 @@ class QuestionComponent extends React.Component {
 
 
 export default Relay.createContainer(QuestionComponent, {
+  initialVariables : {
+        limit : 2147483647,
+      },
 
   fragments: {
-
+         viewer: () => Relay.QL`
+            fragment on UserNode {
+              ${AddQuestionMutation.getFragment('viewer')}
+              ${DeleteQuestionMutation.getFragment('viewer')}
+              questions(first: $limit) {
+                edges {
+                  node {
+                  id
+                  name
+                  ${DeleteQuestionMutation.getFragment('question')}
+                }
+                }
+              }
+         }`
        }
 });

@@ -2,6 +2,8 @@ import Relay from 'react-relay';
 
 class AddQuestionMutation extends Relay.Mutation {
 
+
+
 getMutation () {
   return Relay.QL`mutation { addQuestion }`;
 }
@@ -16,34 +18,45 @@ getVariables () {
   };
 }
 
+
+
 getFatQuery () {
   return Relay.QL`
-    fragment on AddQuestionPayload {
+    fragment on AddQuestionPayload   @relay(pattern: true)  {
+      viewer {
+        id
+      }
+       questionEdge
 
-        question {
-          id
-          name
-        }
-        ok
+
     }
   `;
 }
 
 getConfigs () {
-
   return [{
-    type: 'FIELDS_CHANGE',
-    fieldIDs: {
-      question: this.props.id
-    }
-  }];
+            type : "RANGE_ADD",
+            parentName : "viewer",
+            parentID : this.props.viewer.id,
+            connectionName : "questions",
+            edgeName : "questionEdge",
+            rangeBehaviors : {
+                '' : 'append',
+
+            }
+        }]
 }
 
-static  fragments = {
-    
+static fragments = {
+     viewer : () => Relay.QL`
+         fragment on UserNode {
+            id
+         }
+     `
+   }
+
 }
 
 
-}
 
 export default AddQuestionMutation;

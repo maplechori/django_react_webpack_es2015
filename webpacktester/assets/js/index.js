@@ -5,15 +5,13 @@ import Login   from './login.js'
 import { createHashHistory } from 'history';
 import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
 import useRelay from 'react-router-relay'
-import Dashboard from 'react-dazzle';
 import poll from 'relay-decorators/lib/poll';
 import Question from './QuestionCrud.js'
 import Gauge from './Gauge/Gauge.js';
-
 import auth from './auth'
 import App from './app'
+import AddQuestionMutation from './Mutations/AddQuestionMutation'
 import 'react-dazzle/lib/style/style.css';
-
 
 function requireAuth(nextState, replace) {
     if (!auth.loggedIn()) {
@@ -23,7 +21,6 @@ function requireAuth(nextState, replace) {
         })
     }
 }
-
 
 Relay.injectNetworkLayer(
    new Relay.DefaultNetworkLayer('/graphql', {
@@ -35,19 +32,12 @@ Relay.injectNetworkLayer(
    })
  )
 
-
-
 const AppQueries = {
-
-          viewer: (Component) => Relay.QL`
-
+          viewer: () => Relay.QL`
               query {
-                viewer {
-                    ${Component.getFragment('viewer')}
-                    }
-
-
-            }`,
+                  viewer
+              }
+            `,
              qtype: (Component) => Relay.QL`
                     query {
                       __type(name:"QuestionQuestionType") {
@@ -56,7 +46,8 @@ const AppQueries = {
                     }`,
               };
 
-class Dashboard2 extends React.Component {
+
+class DashboardComponent extends React.Component {
 
 
 
@@ -102,11 +93,7 @@ class Dashboard2 extends React.Component {
           }
         }
 
-const DashboardRelay = Relay.createContainer(Dashboard2, {
-  initialVariables: {
-    pageSize: 10,
-    cursor: null,
-    },
+const Dashboard = Relay.createContainer(DashboardComponent, {
 
     fragments: {
       qtype: () => Relay.QL`
@@ -115,30 +102,10 @@ const DashboardRelay = Relay.createContainer(Dashboard2, {
          } `,
 
       viewer: () => Relay.QL`
-         fragment on SurveyQuery {
-              sections( first: $pageSize, after: $cursor,  ) {
-                       edges {
-                         node {
-                            id
-                            name
-                            survey(first: $pageSize) {
-                                   edges {
-                                     node {
-                                       name
-                                     }
-                                   }
-                            }
-                         }
-                         cursor
-                       }
-                       pageInfo {
-                          hasNextPage
-                          hasPreviousPage
-                          startCursor
-                          endCursor
-                       }
-                     }
-                   }
+         fragment on UserNode {
+             
+              ${Question.getFragment('viewer')}
+        }
                   `,
   }
 });
@@ -150,7 +117,7 @@ ReactDOM.render(
       history={browserHistory}
       render={applyRouterMiddleware(useRelay)}>
             <Route path="/" component={App} queries={AppQueries}>
-              <IndexRoute component={DashboardRelay} onEnter={requireAuth} queries={AppQueries}/>
+              <IndexRoute component={Dashboard} onEnter={requireAuth} queries={AppQueries}/>
               <Route path="login" component={Login} queries={AppQueries}/>
               <Route path="logout" component={(() => (delete localStorage.token && null))}/>
             </Route>

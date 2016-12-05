@@ -143,36 +143,12 @@ export default Relay.createContainer(Surveys, {
       fragment on __Type {
            enumValues { name description }
       } `,
-      
+
 
      viewer: () => Relay.QL`
-        fragment on SurveyQuery {
-
-         sections( first: $pageSize, after: $cursor,  ) {
-
-                        edges {
-                          node {
-                            totalCount
-                             id
-                             name
-                             survey(first: $pageSize) {
-                                    edges {
-                                      node {
-                                        name
-                                      }
-                                    }
-                             }
-                          }
-                          cursor
-                        }
-                  pageInfo {
-                     hasNextPage
-                     hasPreviousPage
-                     startCursor
-                     endCursor
-                  }
+                fragment on UserNode {
+                  id
                 }
-              }
      `,
  }
 });

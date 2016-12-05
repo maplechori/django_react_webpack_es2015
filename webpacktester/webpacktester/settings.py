@@ -60,9 +60,9 @@ GRAPHENE = {
     )
 }
 
-#GRATH_AUTH = {
-#    'USER_FIELDS' :
-#}
+GRAPH_AUTH = {
+ 'USER_FIELDS' : ('first_name', 'username', 'email', 'questions', 'token')
+}
 
 # Application definition
 

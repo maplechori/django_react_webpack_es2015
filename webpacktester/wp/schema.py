@@ -6,9 +6,11 @@ from .models import Section as SectionModel
 from .models import Question as QuestionModel
 from django.contrib.auth.models import User as UserModel
 from graphene_django.debug import DjangoDebug
+from graphql_relay.node.node import from_global_id, to_global_id
 
 import django_filters
 import graph_auth.schema
+from graph_auth.schema import UserNode
 import graphene
 
 def connection_for_type(_type):
@@ -77,6 +79,23 @@ class Question(DjangoObjectType):
     #def resolve_question_type(self, args, context, info, extra):
     #    print(args.question_type)
     #    return literal_eval(args.question_type)[0]
+class DeleteQuestion(relay.ClientIDMutation):
+
+    class Input:
+        id = graphene.String(required=True)
+
+    viewer = graphene.Field(UserNode)
+    questionId = graphene.String()
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, context, info):
+        global_id = input.get("id")
+        id = from_global_id(global_id)[1]
+        question = QuestionModel.objects.get(pk=id)
+        viewer = question.created_by
+        question.delete()
+        return DeleteQuestion(viewer=viewer, questionId=global_id)
+
 
 class AddQuestion(relay.ClientIDMutation):
 
@@ -86,8 +105,10 @@ class AddQuestion(relay.ClientIDMutation):
         data_label = graphene.String(required=True)
         question_text = graphene.String(required=True)
 
-    question = graphene.Field(Question)
-    ok = graphene.Boolean()
+    viewer = graphene.Field(UserNode)
+    questionEdge = graphene.Field(Question.Connection.Edge)
+
+
 
     @classmethod
     def mutate_and_get_payload(cls, input, context, info):
@@ -96,15 +117,24 @@ class AddQuestion(relay.ClientIDMutation):
         question.name = input.get('name')
         question.data_label = input.get('data_label')
         question.question_text = input.get('question_text')
+        viewer = UserModel.objects.get(id=4)
+        question.created_by = viewer
         question.save()
+        viewer = UserModel.objects.get(id=4)
+        viewer.questions.add(question)
+        viewer.save()
+        edge = Question.Connection.Edge(node=question, cursor=0)
 
-        return AddQuestion(question=question, ok=True)
+
+        return AddQuestion(viewer=viewer, questionEdge=edge)
 
 class SurveyMutation(graph_auth.schema.Mutation, graphene.ObjectType, AbstractType):
     add_question = AddQuestion.Field()
+    delete_question = DeleteQuestion.Field()
 
 class SurveyQuery(graph_auth.schema.Query, graphene.ObjectType, AbstractType):
     node = relay.Node.Field()
+    user = relay.Node.Field(lambda: UserNode)
 
     surveys = DjangoFilterConnectionField(Survey)
     survey = relay.Node.Field(Survey)
@@ -114,11 +144,15 @@ class SurveyQuery(graph_auth.schema.Query, graphene.ObjectType, AbstractType):
 
     sections = DjangoFilterConnectionField(Section) #, filterset_class=SectionFilter)
     section = relay.Node.Field(Section)
-    viewer = graphene.Field(lambda: SurveyQuery)
+    #viewer = graphene.Field(lambda: SurveyQuery)
+    viewer = graphene.Field(lambda: UserNode)
+    #@resolve_only_args
+    #def resolve_viewer(self):
+    #    return get_view()
+    @classmethod
+    def resolve_viewer(self, args, context, info, extra):
+        return get_viewer(info)
 
-    @resolve_only_args
-    def resolve_viewer(self):
-        return get_view()
-
-def get_view():
-    return SurveyQuery
+def get_viewer(request):
+    viewer = UserModel.objects.get(pk=4)
+    return viewer #SurveyQuery

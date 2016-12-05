@@ -21,6 +21,7 @@ class LoginComponent extends React.Component {
   login (user, model) {
     const self = this;
     model.username = 'mapleman';
+    console.log(user);
 
     Relay.Store.commitUpdate(
       new LoginMutation({
@@ -66,7 +67,7 @@ class LoginComponent extends React.Component {
 
        <Formsy.Form
          ref="form"
-         onSubmit={(model) => this.login(this.props.viewer.user, model)}
+         onSubmit={(model) => this.login(this.props.viewer, model)}
          className={styles.form} >
 
          <FormsyText
@@ -101,12 +102,15 @@ class LoginComponent extends React.Component {
 const Login = Relay.createContainer(LoginComponent, {
 
   fragments: {
+    qtype: () => Relay.QL `
+            fragment on __Type {
+              name
+            }
+          `,
       viewer:  () => Relay.QL`
-        fragment on SurveyQuery {
-
-          user {
+        fragment on UserNode {
            ${LoginMutation.getFragment('user')}
-         }
+
       }
   `,
 

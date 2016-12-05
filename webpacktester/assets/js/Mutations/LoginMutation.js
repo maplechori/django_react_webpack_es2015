@@ -30,7 +30,8 @@ class LoginMutation extends Relay.Mutation {
           firstName
           token
           id
-        }`
+        }`,
+
   }
 
 
