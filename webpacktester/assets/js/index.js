@@ -11,6 +11,7 @@ import Gauge from './Gauge/Gauge.js';
 import auth from './auth'
 import App from './app'
 import AddQuestionMutation from './Mutations/AddQuestionMutation'
+import StatusIndicator from './StatusIndicator'
 import 'react-dazzle/lib/style/style.css';
 
 function requireAuth(nextState, replace) {
@@ -86,7 +87,8 @@ class DashboardComponent extends React.Component {
                              legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
                              label="35%"/>
                      </div>
-
+                     
+                     <StatusIndicator question={this.props.viewer.questions.edges[0].node}/>
                      <Question viewer={this.props.viewer} types={this.props.qtype}/>
                     </div>
             </div>)
@@ -103,7 +105,13 @@ const Dashboard = Relay.createContainer(DashboardComponent, {
 
       viewer: () => Relay.QL`
          fragment on UserNode {
-             
+              questions(first: 10000) {
+                edges {
+                  node {
+                ${StatusIndicator.getFragment('question')}
+              }
+            }
+          }
               ${Question.getFragment('viewer')}
         }
                   `,

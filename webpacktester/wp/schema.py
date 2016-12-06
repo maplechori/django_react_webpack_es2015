@@ -12,6 +12,7 @@ import django_filters
 import graph_auth.schema
 from graph_auth.schema import UserNode
 import graphene
+import random
 
 def connection_for_type(_type):
     class Connection(graphene.Connection):
@@ -74,7 +75,19 @@ class Question(DjangoObjectType):
 
     #question_type = graphene.String()
     #question_type = graphene.Field(QuestionType)
+    count_a = graphene.Int()
+    count_b = graphene.Int()
+    count_c = graphene.Int()
 
+    @staticmethod
+    def resolve_count_a(self, args, context, info):
+        return random.randint(3,12)
+    @staticmethod
+    def resolve_count_b(self, args, context, info):
+        return random.randint(5,8)
+    @staticmethod
+    def resolve_count_c(self, args, context, info):
+        return random.randint(3,5)
     #@classmethod
     #def resolve_question_type(self, args, context, info, extra):
     #    print(args.question_type)
