@@ -162,7 +162,7 @@ export default Relay.createContainer(QuestionComponent, {
 
   fragments: {
          viewer: () => Relay.QL`
-            fragment on UserNode {
+            fragment on UserViewer {
               ${AddQuestionMutation.getFragment('viewer')}
               ${DeleteQuestionMutation.getFragment('viewer')}
               questions(first: $limit) {

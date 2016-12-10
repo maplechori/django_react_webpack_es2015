@@ -1,31 +1,104 @@
+
+
 from graphene import relay, ObjectType, AbstractType, resolve_only_args
-from graphene_django import DjangoObjectType
+from graphene_django import DjangoObjectType, DjangoConnectionField
 from graphene_django.filter import DjangoFilterConnectionField
 from .models import Survey as SurveyModel
 from .models import Section as SectionModel
 from .models import Question as QuestionModel
+from .models import Authorization_Denied
 from django.contrib.auth.models import User as UserModel
 from graphene_django.debug import DjangoDebug
 from graphql_relay.node.node import from_global_id, to_global_id
+import jwt, json, django_filters, graphene, random, django
+from rest_framework_jwt.settings import api_settings
+from django.conf import settings
 
-import django_filters
-import graph_auth.schema
-from graph_auth.schema import UserNode
-import graphene
-import random
 
-def connection_for_type(_type):
-    class Connection(graphene.Connection):
-        total_count = graphene.Int()
+def get_user(request):
+    print("get_user")
+    JWT_ALGORITHM = 'HS256'
+    JWT_SECRET = django.conf.settings.SECRET_KEY
 
-        class Meta:
-            name = _type._meta.name + 'Connection'
-            node = _type
+    if hasattr(request, "META") and "HTTP_AUTHORIZATION" in request.META:
+        jwt_token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
 
-        def resolve_total_count(self, args, context, info):
-            return self.length
+        if jwt_token:
+            try:
+                payload = jwt.decode(jwt_token,JWT_SECRET,algorithms=[JWT_ALGORITHM])
+                print("Got user (get_user)")
+                user = UserModel.objects.get(id=payload['user_id'])
+                return user
+            except (jwt.DecodeError, jwt.ExpiredSignatureError) as e:
+                print("Got exception", e)
+                return None
+    print("No HTTP AUTHORIZATION")
+    return None
 
-    return Connection
+class UserViewer(DjangoObjectType):
+
+    class Meta:
+        model = UserModel
+        interfaces = (relay.Node,)
+
+    @classmethod
+    def get_node(cls, id, context, info):
+        user = super(UserViewer, cls).get_node(id, context, info)
+        if context.user.id and user.id == context.user.id:
+            return user
+        else:
+            return None
+
+
+    questions = DjangoConnectionField(lambda: Question)
+    def resolve_questions(self, args, context, info):
+        print("RESOLVE QUESTIONS")
+        return QuestionModel.objects.all()
+
+    token = graphene.String()
+    def resolve_token(self, args, context, info):
+        print("RESOLVE TOKEN")
+        if self.id != context.user.id and not getattr(self, 'is_current_user', False):
+            return None
+
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+        payload = jwt_payload_handler(self)
+        token = jwt_encode_handler(payload)
+
+        return token
+
+    #questions = DjangoFilterConnectionField(lambda: Question)
+    #survey = DjangoFilterConnectionField(lambda: Survey)
+    #section = DjangoFilterConnectionField(lambda: Section)
+
+class LoginUser(relay.ClientIDMutation):
+    class Input:
+        username = graphene.String()
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    ok = graphene.Boolean()
+    user = graphene.Field(UserViewer)
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, context, info):
+        model = django.contrib.auth.get_user_model()
+
+        params = {
+            model.USERNAME_FIELD: input.get(model.USERNAME_FIELD, input.get('email')),
+            'password': input.get('password')
+        }
+
+        user = django.contrib.auth.authenticate(**params)
+        print(user)
+
+        if user:
+            user.is_current_user = True
+            return LoginUser(ok=True, user=user)
+        else:
+            return LoginUser(ok=False, user=None)
 
 class Survey(DjangoObjectType):
     class Meta:
@@ -88,16 +161,13 @@ class Question(DjangoObjectType):
     @staticmethod
     def resolve_count_c(self, args, context, info):
         return random.randint(3,5)
-    #@classmethod
-    #def resolve_question_type(self, args, context, info, extra):
-    #    print(args.question_type)
-    #    return literal_eval(args.question_type)[0]
+
 class DeleteQuestion(relay.ClientIDMutation):
 
     class Input:
         id = graphene.String(required=True)
 
-    viewer = graphene.Field(UserNode)
+    viewer = graphene.Field(UserViewer)
     questionId = graphene.String()
 
     @classmethod
@@ -105,8 +175,8 @@ class DeleteQuestion(relay.ClientIDMutation):
         global_id = input.get("id")
         id = from_global_id(global_id)[1]
         question = QuestionModel.objects.get(pk=id)
-        viewer = question.created_by
         question.delete()
+        viewer = get_user(context)
         return DeleteQuestion(viewer=viewer, questionId=global_id)
 
 
@@ -118,10 +188,8 @@ class AddQuestion(relay.ClientIDMutation):
         data_label = graphene.String(required=True)
         question_text = graphene.String(required=True)
 
-    viewer = graphene.Field(UserNode)
+    viewer = graphene.Field(UserViewer)
     questionEdge = graphene.Field(Question.Connection.Edge)
-
-
 
     @classmethod
     def mutate_and_get_payload(cls, input, context, info):
@@ -130,42 +198,32 @@ class AddQuestion(relay.ClientIDMutation):
         question.name = input.get('name')
         question.data_label = input.get('data_label')
         question.question_text = input.get('question_text')
-        viewer = UserModel.objects.get(id=4)
+        viewer = get_user(context)
         question.created_by = viewer
         question.save()
-        viewer = UserModel.objects.get(id=4)
-        viewer.questions.add(question)
-        viewer.save()
         edge = Question.Connection.Edge(node=question, cursor=0)
-
-
         return AddQuestion(viewer=viewer, questionEdge=edge)
 
-class SurveyMutation(graph_auth.schema.Mutation, graphene.ObjectType, AbstractType):
+class SurveyMutation(graphene.ObjectType, AbstractType):
     add_question = AddQuestion.Field()
     delete_question = DeleteQuestion.Field()
+    login_user = LoginUser.Field()
 
-class SurveyQuery(graph_auth.schema.Query, graphene.ObjectType, AbstractType):
+class SurveyQuery(graphene.ObjectType, AbstractType):
     node = relay.Node.Field()
-    user = relay.Node.Field(lambda: UserNode)
+    #user = relay.Node.Field(lambda: UserViewer)
 
-    surveys = DjangoFilterConnectionField(Survey)
-    survey = relay.Node.Field(Survey)
+    #surveys = DjangoFilterConnectionField(Survey)
+    #survey = relay.Node.Field(Survey)
 
-    questions = DjangoFilterConnectionField(Question)
-    question = relay.Node.Field(Question)
+    #questions = DjangoFilterConnectionField(Question)
+    #question = relay.Node.Field(Question)
 
-    sections = DjangoFilterConnectionField(Section) #, filterset_class=SectionFilter)
-    section = relay.Node.Field(Section)
+    #sections = DjangoFilterConnectionField(Section) #, filterset_class=SectionFilter)
+    #section = relay.Node.Field(Section)
     #viewer = graphene.Field(lambda: SurveyQuery)
-    viewer = graphene.Field(lambda: UserNode)
-    #@resolve_only_args
-    #def resolve_viewer(self):
-    #    return get_view()
-    @classmethod
-    def resolve_viewer(self, args, context, info, extra):
-        return get_viewer(info)
+    viewer = graphene.Field(lambda: UserViewer)
 
-def get_viewer(request):
-    viewer = UserModel.objects.get(pk=4)
-    return viewer #SurveyQuery
+
+    def resolve_viewer(self, args, context, info):
+        return get_user(context)

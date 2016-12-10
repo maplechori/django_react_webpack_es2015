@@ -49,7 +49,7 @@ getConfigs () {
 
 static fragments = {
      viewer : () => Relay.QL`
-         fragment on UserNode {
+         fragment on UserViewer {
             id
          }
      `

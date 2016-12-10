@@ -14,8 +14,13 @@ import AddQuestionMutation from './Mutations/AddQuestionMutation'
 import StatusIndicator from './StatusIndicator'
 import 'react-dazzle/lib/style/style.css';
 
+import { RelayNetworkLayer, authMiddleware, urlMiddleware } from 'react-relay-network-layer';
+
+
 function requireAuth(nextState, replace) {
+  console.log("Checking if user is authenticated", auth.loggedIn())
     if (!auth.loggedIn()) {
+        console.log('User not logged in, redirecting to login page');
         replace({
             pathname:'/login',
             state: {nextPathname: '/'}
@@ -23,6 +28,7 @@ function requireAuth(nextState, replace) {
     }
 }
 
+/*
 Relay.injectNetworkLayer(
    new Relay.DefaultNetworkLayer('/graphql', {
      get headers() {
@@ -32,11 +38,50 @@ Relay.injectNetworkLayer(
      }
    })
  )
+*/
+Relay.injectNetworkLayer(new RelayNetworkLayer([
+  urlMiddleware({
+      url: (req) => '/graphql',
+
+ }),
+  authMiddleware({
+    allowEmptyToken: true,
+    token: (req) =>
+    {
+      console.log('middleware - checking token', localStorage.token);
+      return localStorage.token
+    },
+
+    tokenRefreshPromise: (req) => {
+
+     if (localStorage.token === "undefined" || localStorage.token === undefined) {
+       throw true;
+     }
+
+     console.log('[client.js] resolve token refresh', req);
+     return fetch('/jwt-refresh/', { method: "POST",
+                                     headers: { 'Content-Type': 'application/json' },
+                                     body: "{\"token\" : \"" + localStorage.token + "\"}"
+                                    })
+       .then(res => res.json())
+       .then(json => {
+
+         auth.logout();
+         localStorage.token = json.token
+
+       })
+       .catch(err => console.log('[client] ERROR can not refresh token', err));
+   }
+ })
+], {disableBatchQuery: true}));
+
 
 const AppQueries = {
-          viewer: () => Relay.QL`
+          viewer: (Component) => Relay.QL`
               query {
-                  viewer
+                  viewer {
+                      ${Component.getFragment('viewer')}
+                  }
               }
             `,
              qtype: (Component) => Relay.QL`
@@ -50,7 +95,10 @@ const AppQueries = {
 
 class DashboardComponent extends React.Component {
 
-
+          constructor(props) {
+            super(props);
+            console.log("[dashboard] ", props);
+          }
 
           render() {
             return(<div>
@@ -87,7 +135,7 @@ class DashboardComponent extends React.Component {
                              legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
                              label="35%"/>
                      </div>
-                     
+
                      <StatusIndicator question={this.props.viewer.questions.edges[0].node}/>
                      <Question viewer={this.props.viewer} types={this.props.qtype}/>
                     </div>
@@ -104,11 +152,13 @@ const Dashboard = Relay.createContainer(DashboardComponent, {
          } `,
 
       viewer: () => Relay.QL`
-         fragment on UserNode {
+         fragment on UserViewer {
+              id
+              username
               questions(first: 10000) {
                 edges {
                   node {
-                ${StatusIndicator.getFragment('question')}
+                    ${StatusIndicator.getFragment('question')}
               }
             }
           }

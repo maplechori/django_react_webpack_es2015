@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,9 +47,13 @@ WEBPACK_LOADER = {
 
 
 REST_FRAMEWORK = {
+     'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    #       'rest_framework.authentication.SessionAuthentication'
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     )
 }
 
@@ -58,10 +63,6 @@ GRAPHENE = {
      'MIDDLEWARE': (
         'graphene_django.debug.DjangoDebugMiddleware',
     )
-}
-
-GRAPH_AUTH = {
- 'USER_FIELDS' : ('first_name', 'username', 'email', 'questions', 'token')
 }
 
 # Application definition
@@ -76,7 +77,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'graphene_django',
-    'graph_auth',
     'webpack_loader',
     'wp'
 ]
@@ -109,6 +109,12 @@ TEMPLATES = [
         },
     },
 ]
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=365*3600),
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(seconds=90),
+}
 
 WSGI_APPLICATION = 'webpacktester.wsgi.application'
 

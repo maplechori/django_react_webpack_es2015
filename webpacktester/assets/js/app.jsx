@@ -146,7 +146,7 @@ export default Relay.createContainer(Surveys, {
 
 
      viewer: () => Relay.QL`
-                fragment on UserNode {
+                fragment on UserViewer {
                   id
                 }
      `,

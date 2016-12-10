@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Authorization_Denied(models.Model):
+    pass
 
 
 # Create your models here.

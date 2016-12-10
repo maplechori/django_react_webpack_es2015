@@ -5,19 +5,15 @@ import poll from 'relay-decorators/lib/poll';
 
 
 
-@poll(2000)
+//@poll(2000)
 class StatusIndicatorComponent extends React.Component {
         state = { active: false, hideLabels: true, data: true }
 
         constructor(props) {
-          super(props);     
+          super(props);
         }
 
-
-
-
         render() {
-
 
           return(<div>
 

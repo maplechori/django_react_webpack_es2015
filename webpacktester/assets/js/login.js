@@ -2,7 +2,7 @@ import React from 'react'
 import Formsy from 'formsy-react'
 import Relay from 'react-relay'
 import TextField from 'material-ui/TextField';
-import FormsyText from './FormsyText'
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import RaisedButton from 'material-ui/RaisedButton'
 import styles from './theme/login.css';
 import LoginMutation from './Mutations/LoginMutation'
@@ -13,7 +13,6 @@ class LoginComponent extends React.Component {
   state = { canSubmit: false }
 
   constructor(props) {
-    console.log(props);
     super(props);
   }
 
@@ -32,7 +31,7 @@ class LoginComponent extends React.Component {
       }),
       {
         onFailure: (transaction) => {
-          console.log('login failed');
+          console.log('login failed', transaction);
           console.log(transaction.getError().source);
           const errorMessage = transaction.getError().source.errors[0].message;
           const formError = {};
@@ -49,6 +48,7 @@ class LoginComponent extends React.Component {
         onSuccess: (response) => {
 
           localStorage.token = response.loginUser.user.token;
+
           console.log(self.props);
           self.props.location.state ? browserHistory.push("/") :  browserHistory.goBack();
         }
@@ -59,7 +59,7 @@ class LoginComponent extends React.Component {
 
   render() {
   const submitMargin = {marginTop: 20};
-
+  console.log("[login] render");
 
    return (
      <div className={styles.content}>
@@ -67,7 +67,7 @@ class LoginComponent extends React.Component {
 
        <Formsy.Form
          ref="form"
-         onSubmit={(model) => this.login(this.props.viewer, model)}
+           onSubmit={(model) => this.login(this.props.viewer, model)}
          className={styles.form} >
 
          <FormsyText
@@ -102,13 +102,13 @@ class LoginComponent extends React.Component {
 const Login = Relay.createContainer(LoginComponent, {
 
   fragments: {
-    qtype: () => Relay.QL `
+      qtype: () => Relay.QL `
             fragment on __Type {
               name
             }
           `,
       viewer:  () => Relay.QL`
-        fragment on UserNode {
+        fragment on UserViewer {
            ${LoginMutation.getFragment('user')}
 
       }

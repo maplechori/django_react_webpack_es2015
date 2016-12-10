@@ -1,22 +1,4 @@
-  import Relay from 'react-relay';
-
-  {/*
-
-
-    mutation loginUser {
-      loginUser(input: { username: "mapleman", email: "maplechori@gmail.com", password:"f0ckf0ck"}) {
-         user {
-           id
-          token
-         }
-        ok
-        clientMutationId
-
-      }
-    }
-
-
-  */}
+import Relay from 'react-relay';
 
 class LoginMutation extends Relay.Mutation {
 
@@ -26,7 +8,7 @@ class LoginMutation extends Relay.Mutation {
 
   static fragments = {
   user: () => Relay.QL`
-        fragment on UserNode {
+        fragment on UserViewer {
           firstName
           token
           id
@@ -60,9 +42,10 @@ class LoginMutation extends Relay.Mutation {
       type: 'REQUIRED_CHILDREN',
       children: [Relay.QL`
         fragment on LoginUserPayload {
-         user{  id,
+         user {
+           id,
         token
-      }
+        }
       }`]
     }];
   }
