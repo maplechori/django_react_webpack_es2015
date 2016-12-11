@@ -8,7 +8,6 @@ import styles from './theme/login.css';
 import LoginMutation from './Mutations/LoginMutation'
 import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
 
-
 class LoginComponent extends React.Component {
   state = { canSubmit: false }
 
@@ -16,11 +15,8 @@ class LoginComponent extends React.Component {
     super(props);
   }
 
-
   login (user, model) {
     const self = this;
-    model.username = 'mapleman';
-    console.log(user);
 
     Relay.Store.commitUpdate(
       new LoginMutation({
@@ -47,10 +43,11 @@ class LoginComponent extends React.Component {
         },
         onSuccess: (response) => {
 
-          localStorage.token = response.loginUser.user.token;
-
-          console.log(self.props);
-          self.props.location.state ? browserHistory.push("/") :  browserHistory.goBack();
+          if(response.loginUser.user != null)
+          {
+            localStorage.token = response.loginUser.user.token;
+          }
+            browserHistory.push("/");
         }
       }
     );
@@ -59,7 +56,6 @@ class LoginComponent extends React.Component {
 
   render() {
   const submitMargin = {marginTop: 20};
-  console.log("[login] render");
 
    return (
      <div className={styles.content}>
@@ -102,15 +98,9 @@ class LoginComponent extends React.Component {
 const Login = Relay.createContainer(LoginComponent, {
 
   fragments: {
-      qtype: () => Relay.QL `
-            fragment on __Type {
-              name
-            }
-          `,
       viewer:  () => Relay.QL`
         fragment on UserViewer {
            ${LoginMutation.getFragment('user')}
-
       }
   `,
 

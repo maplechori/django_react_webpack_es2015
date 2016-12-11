@@ -98,7 +98,7 @@ class LoginUser(relay.ClientIDMutation):
             user.is_current_user = True
             return LoginUser(ok=True, user=user)
         else:
-            return LoginUser(ok=False, user=None)
+            return LoginUser(ok=False,  user=None)
 
 class Survey(DjangoObjectType):
     class Meta:

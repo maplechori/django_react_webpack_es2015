@@ -31,6 +31,9 @@ class LoginMutation extends Relay.Mutation {
         user {
           id,
           token,
+          username
+          email
+          questions
         }
         ok
       }
@@ -44,7 +47,10 @@ class LoginMutation extends Relay.Mutation {
         fragment on LoginUserPayload {
          user {
            id,
-        token
+        token,
+        username,
+        email,
+         
         }
       }`]
     }];

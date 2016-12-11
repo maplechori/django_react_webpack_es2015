@@ -17,8 +17,9 @@ import 'react-dazzle/lib/style/style.css';
 import { RelayNetworkLayer, authMiddleware, urlMiddleware } from 'react-relay-network-layer';
 
 
-function requireAuth(nextState, replace) {
+var requireAuth = (nextState, replace) => {
   console.log("Checking if user is authenticated", auth.loggedIn())
+  console.log(nextState, replace);
     if (!auth.loggedIn()) {
         console.log('User not logged in, redirecting to login page');
         replace({
@@ -26,6 +27,9 @@ function requireAuth(nextState, replace) {
             state: {nextPathname: '/'}
         })
     }
+  console.log('weee', nextState, replace);
+
+  //.forceFetch();
 }
 
 /*
@@ -40,15 +44,11 @@ Relay.injectNetworkLayer(
  )
 */
 Relay.injectNetworkLayer(new RelayNetworkLayer([
-  urlMiddleware({
-      url: (req) => '/graphql',
 
- }),
   authMiddleware({
     allowEmptyToken: true,
     token: (req) =>
     {
-      console.log('middleware - checking token', localStorage.token);
       return localStorage.token
     },
 
@@ -61,14 +61,12 @@ Relay.injectNetworkLayer(new RelayNetworkLayer([
      console.log('[client.js] resolve token refresh', req);
      return fetch('/jwt-refresh/', { method: "POST",
                                      headers: { 'Content-Type': 'application/json' },
-                                     body: "{\"token\" : \"" + localStorage.token + "\"}"
+                                     body: '{"token" : "' + localStorage.token + '"}'
                                     })
        .then(res => res.json())
        .then(json => {
-
-         auth.logout();
-         localStorage.token = json.token
-
+             auth.logout();
+             localStorage.token = json.token
        })
        .catch(err => console.log('[client] ERROR can not refresh token', err));
    }
@@ -94,15 +92,18 @@ const AppQueries = {
 
 
 class DashboardComponent extends React.Component {
+          state = { loggedIn : false }
 
           constructor(props) {
             super(props);
-            console.log("[dashboard] ", props);
           }
 
           render() {
             return(<div>
-              {localStorage.token ? <li><Link to="logout">Logout</Link></li> : <li><Link to="login">Login</Link></li>}
+              {localStorage.token && this.props.viewer != null ?
+
+              <div>
+                <li><Link to="logout">Logout</Link></li>
 
               <div style={{textAlign: 'center', marginTop: '50px'}}>
 
@@ -136,9 +137,12 @@ class DashboardComponent extends React.Component {
                              label="35%"/>
                      </div>
 
-                     <StatusIndicator question={this.props.viewer.questions.edges[0].node}/>
-                     <Question viewer={this.props.viewer} types={this.props.qtype}/>
+                    <StatusIndicator question={this.props.viewer.questions.edges[0].node}/>
+                    <Question viewer={this.props.viewer} types={this.props.qtype}/>
                     </div>
+                    </div>
+
+                     : <div><Login viewer={this.props.viewer}/></div>}
             </div>)
           }
         }
@@ -173,10 +177,10 @@ ReactDOM.render(
       <Router
       environment={Relay.Store}
       history={browserHistory}
+      forceFetch={true}
       render={applyRouterMiddleware(useRelay)}>
             <Route path="/" component={App} queries={AppQueries}>
-              <IndexRoute component={Dashboard} onEnter={requireAuth} queries={AppQueries}/>
-              <Route path="login" component={Login} queries={AppQueries}/>
+              <IndexRoute component={Dashboard} queries={AppQueries}/>
               <Route path="logout" component={(() => (delete localStorage.token && null))}/>
             </Route>
        </Router>,
