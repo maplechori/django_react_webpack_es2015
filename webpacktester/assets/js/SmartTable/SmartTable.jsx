@@ -6,14 +6,12 @@ import SortIcon from 'material-ui/svg-icons/action/swap-vert';
 import IconButton from 'material-ui/IconButton';
 import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 import ChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import createFragment from 'react-addons-create-fragment'
 import {red500, yellow500, blue500} from 'material-ui/styles/colors';
 import styles from './SmartTable.scss';
 import formatTableCell from '../SmartTableRow/formatTableCell';
 
 
-injectTapEventPlugin();
 
 
 function sortFunc(a, b, key) {

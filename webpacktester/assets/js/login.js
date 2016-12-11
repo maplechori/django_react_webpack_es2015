@@ -7,6 +7,8 @@ import RaisedButton from 'material-ui/RaisedButton'
 import styles from './theme/login.css';
 import LoginMutation from './Mutations/LoginMutation'
 import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
 
 class LoginComponent extends React.Component {
   state = { canSubmit: false }

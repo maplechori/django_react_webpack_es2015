@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import Relay from 'react-relay';
-import Login   from './login.js'
+import Login from './login.js'
 import { createHashHistory } from 'history';
 import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
 import useRelay from 'react-router-relay'
@@ -12,37 +12,23 @@ import auth from './auth'
 import App from './app'
 import AddQuestionMutation from './Mutations/AddQuestionMutation'
 import StatusIndicator from './StatusIndicator'
-import 'react-dazzle/lib/style/style.css';
-
 import { RelayNetworkLayer, authMiddleware, urlMiddleware } from 'react-relay-network-layer';
 
 
 var requireAuth = (nextState, replace) => {
-  console.log("Checking if user is authenticated", auth.loggedIn())
-  console.log(nextState, replace);
+
     if (!auth.loggedIn()) {
-        console.log('User not logged in, redirecting to login page');
+
         replace({
             pathname:'/login',
             state: {nextPathname: '/'}
         })
     }
-  console.log('weee', nextState, replace);
 
-  //.forceFetch();
+
 }
 
-/*
-Relay.injectNetworkLayer(
-   new Relay.DefaultNetworkLayer('/graphql', {
-     get headers() {
-       return {
-         Authorization: 'Bearer ' + localStorage.token
-       }
-     }
-   })
- )
-*/
+
 Relay.injectNetworkLayer(new RelayNetworkLayer([
 
   authMiddleware({
