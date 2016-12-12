@@ -8,6 +8,20 @@ import styles from './theme/login.css';
 import LoginMutation from './Mutations/LoginMutation'
 import { IndexRoute, Route, Router, applyRouterMiddleware, browserHistory, Link } from 'react-router'
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import {indigo500, indigo700, redA200} from 'material-ui/styles/colors';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+const muiTheme = getMuiTheme({
+    palette: {
+        primary1Color: indigo500,
+        primary2Color: indigo700,
+        accent1Color: redA200,
+        pickerHeaderColor: indigo500,
+    },
+});
+
+
 injectTapEventPlugin();
 
 class LoginComponent extends React.Component {
@@ -60,7 +74,10 @@ class LoginComponent extends React.Component {
   const submitMargin = {marginTop: 20};
 
    return (
-     <div className={styles.content}>
+      <div>
+      <MuiThemeProvider muiTheme={muiTheme}>
+      <div className={styles.content}>
+
        <h2>Login</h2>
 
        <Formsy.Form
@@ -89,7 +106,8 @@ class LoginComponent extends React.Component {
 
 
        </Formsy.Form>
-
+       </div>
+       </MuiThemeProvider>
      </div>
    );
  }

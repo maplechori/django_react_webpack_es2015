@@ -13,6 +13,18 @@ import App from './app'
 import AddQuestionMutation from './Mutations/AddQuestionMutation'
 import StatusIndicator from './StatusIndicator'
 import { RelayNetworkLayer, authMiddleware, urlMiddleware } from 'react-relay-network-layer';
+import {indigo500, indigo700, redA200} from 'material-ui/styles/colors';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+const muiTheme = getMuiTheme({
+    palette: {
+        primary1Color: indigo500,
+        primary2Color: indigo700,
+        accent1Color: redA200,
+        pickerHeaderColor: indigo500,
+    },
+});
 
 
 var requireAuth = (nextState, replace) => {
@@ -28,6 +40,13 @@ var requireAuth = (nextState, replace) => {
 
 }
 
+var logout = (nextState, replace) => {
+    auth.logout()
+    replace({
+      pathname: '/',
+      state: {nextPathname: '/'}
+    })
+}
 
 Relay.injectNetworkLayer(new RelayNetworkLayer([
 
@@ -89,11 +108,11 @@ class DashboardComponent extends React.Component {
               {localStorage.token && this.props.viewer != null ?
 
               <div>
-                <li><Link to="logout">Logout</Link></li>
-
-              <div style={{textAlign: 'center', marginTop: '50px'}}>
-
-              <div className="gauge-box">
+              <MuiThemeProvider muiTheme={muiTheme}>
+              <div>
+                  <li><Link to="logout">Logout</Link></li>
+                    <div style={{textAlign: 'center', marginTop: '50px'}}>
+                    <div className="gauge-box">
                       <Gauge value={90}
                              size={10}
                              width={20}
@@ -111,7 +130,7 @@ class DashboardComponent extends React.Component {
                             arrow={{height: 60, width: 6, color: "#ccc"}}
                             legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
                             label="35%"/>
-                    </div>
+                            </div>
                     <div className="gauge-box">
                       <Gauge value={75}
                              size={10}
@@ -127,8 +146,12 @@ class DashboardComponent extends React.Component {
                     <Question viewer={this.props.viewer} types={this.props.qtype}/>
                     </div>
                     </div>
+                    </MuiThemeProvider>
+                    </div>
 
-                     : <div><Login viewer={this.props.viewer}/></div>}
+                     : <div><Login viewer={this.props.viewer}/>
+
+                     </div>}
             </div>)
           }
         }
@@ -167,7 +190,7 @@ ReactDOM.render(
       render={applyRouterMiddleware(useRelay)}>
             <Route path="/" component={App} queries={AppQueries}>
               <IndexRoute component={Dashboard} queries={AppQueries}/>
-              <Route path="logout" component={(() => (delete localStorage.token && null))}/>
+              <Route path="logout" component={(() => (delete localStorage.token   && null))}/>
             </Route>
        </Router>,
       document.getElementById('react-app'))

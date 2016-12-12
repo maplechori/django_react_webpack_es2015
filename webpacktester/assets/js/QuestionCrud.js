@@ -9,7 +9,9 @@ import MenuItem from 'material-ui/MenuItem';
 import PieChart from 'react-d3-components/lib/PieChart'
 import AddQuestionMutation from './Mutations/AddQuestionMutation'
 import DeleteQuestionMutation from './Mutations/DeleteQuestionMutation'
-
+import {List, ListItem} from 'material-ui/List';
+import DeleteIcon from 'material-ui/svg-icons/action/delete'
+import IconButton from 'material-ui/IconButton';
 
 import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
         FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
@@ -75,7 +77,7 @@ class QuestionComponent extends React.Component {
            this.setState({canSubmit: false});
     }
 
-
+// {Relay.Store.commitUpdate(new DeleteQuestionMutation({viewer: this.props.viewer, question: row.node})})
 
     render() {
       let {paperStyle, switchStyle, submitStyle } = this.styles;
@@ -84,20 +86,20 @@ class QuestionComponent extends React.Component {
    return (
 
      <MuiThemeProvider muiTheme={getMuiTheme()}>
-       <Paper style={paperStyle}>
-        <div>
-        <ul>
 
-          { this.props.viewer.questions.edges.map((row, index) => {
-                  return (
-                    <li key={row.node.id}>
-                    {row.node.name}
-                    <button className="destroy" onClick={() => Relay.Store.commitUpdate(new DeleteQuestionMutation({viewer: this.props.viewer, question: row.node}))} />
-                    </li>
-                  )
-         })}
-         </ul>
-        </div>
+        <div>
+        <Paper style={paperStyle}>
+
+         <List>
+          { this.props.viewer.questions.edges.map((row, index) => (
+                      <ListItem key={row.node.id} primaryText={row.node.name} rightIconButton={<IconButton onClick={() => {(Relay.Store.commitUpdate(new DeleteQuestionMutation({viewer: this.props.viewer, question: row.node})))}}><DeleteIcon/></IconButton>}/>
+                  ))
+         }
+         </List>
+
+         </Paper>
+         <br/>
+       <Paper style={paperStyle}>
          <Formsy.Form
            onValid={this.enableButton}
            onInvalid={this.disableButton}
@@ -149,6 +151,7 @@ class QuestionComponent extends React.Component {
            />
          </Formsy.Form>
        </Paper>
+       </div>
      </MuiThemeProvider>
    );
  }
