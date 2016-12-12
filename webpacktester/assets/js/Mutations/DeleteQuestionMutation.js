@@ -40,6 +40,15 @@ getConfigs () {
         }]
 }
 
+getOptimisticResponse() {
+  return {
+
+      questionId: this.props.question.id
+
+
+  };
+}
+
 static fragments = {
      viewer: () => Relay.QL`
          fragment on UserViewer {
@@ -50,6 +59,8 @@ static fragments = {
             id
          }`
    }
+
+
 
 }
 

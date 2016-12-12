@@ -77,8 +77,6 @@ class QuestionComponent extends React.Component {
            this.setState({canSubmit: false});
     }
 
-// {Relay.Store.commitUpdate(new DeleteQuestionMutation({viewer: this.props.viewer, question: row.node})})
-
     render() {
       let {paperStyle, switchStyle, submitStyle } = this.styles;
       let { wordsError, numericError, urlError } = this.errorMessages;
