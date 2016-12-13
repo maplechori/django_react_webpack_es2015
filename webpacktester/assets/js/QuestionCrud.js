@@ -12,16 +12,28 @@ import DeleteQuestionMutation from './Mutations/DeleteQuestionMutation'
 import {List, ListItem} from 'material-ui/List';
 import DeleteIcon from 'material-ui/svg-icons/action/delete'
 import IconButton from 'material-ui/IconButton';
-
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
         FormsySelect, FormsyText, FormsyTime, FormsyToggle } from 'formsy-material-ui/lib';
 
 
 class QuestionComponent extends React.Component {
-    state = {canSubmit: false, update: false}
+    state = {canSubmit: false, update: false, dialogs: [], selectedDialog: null}
 
     constructor(props) {
           super(props);
+
+
+
+    }
+
+    componentWillMount() {
+      this.props.viewer.questions.edges.map((row, index) => {
+              var dialogs = this.state.dialogs;
+              dialogs[index] = false;
+              this.setState({dialogs: dialogs});
+      });
     }
 
 
@@ -77,6 +89,25 @@ class QuestionComponent extends React.Component {
            this.setState({canSubmit: false});
     }
 
+    clicky = (e, id, index) => {
+      console.log(e,id,index);
+      var dialogs = this.state.dialogs;
+      dialogs[index] = true;
+      this.setState({dialogs: dialogs});
+
+    }
+
+    handleClose = (e, index ) => {
+      console.log(e,index);
+      var dialogs = this.state.dialogs;
+      dialogs[index] = false  ;
+      this.setState({dialogs: dialogs});
+    }
+
+    selectList(listId) {
+        this.setState({ listSelected: listId });
+      }
+
     render() {
       let {paperStyle, switchStyle, submitStyle } = this.styles;
       let { wordsError, numericError, urlError } = this.errorMessages;
@@ -90,7 +121,10 @@ class QuestionComponent extends React.Component {
 
          <List>
           { this.props.viewer.questions.edges.map((row, index) => (
-                      <ListItem key={row.node.id} primaryText={row.node.name} rightIconButton={<IconButton onClick={() => {(Relay.Store.commitUpdate(new DeleteQuestionMutation({viewer: this.props.viewer, question: row.node})))}}><DeleteIcon/></IconButton>}/>
+                    <div key={row.node.id}>
+                      <Dialog title={row.node.id} open={this.state.dialogs[index]} actions={<FlatButton label="Submit" primary={true} keyboardFocus={true} onTouchTap={(e) => this.handleClose(e, index)}/>}/>
+                      <ListItem onClick={(e) => this.clicky(e, row.node.id, index)}  primaryText={row.node.name} rightIconButton={<IconButton onClick={() => {(Relay.Store.commitUpdate(new DeleteQuestionMutation({viewer: this.props.viewer, question: row.node})))}}><DeleteIcon/></IconButton>}/>
+                    </div>
                   ))
          }
          </List>
