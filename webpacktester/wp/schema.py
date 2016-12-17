@@ -1,12 +1,10 @@
-
-
 from graphene import relay, ObjectType, AbstractType, resolve_only_args
 from graphene_django import DjangoObjectType, DjangoConnectionField
 from graphene_django.filter import DjangoFilterConnectionField
 from .models import Survey as SurveyModel
 from .models import Section as SectionModel
 from .models import Question as QuestionModel
-from .models import Authorization_Denied
+from .models import QuestionForm as QuestionFormModel
 from django.contrib.auth.models import User as UserModel
 from graphene_django.debug import DjangoDebug
 from graphql_relay.node.node import from_global_id, to_global_id
@@ -49,6 +47,10 @@ class UserViewer(DjangoObjectType):
         else:
             return None
 
+    questionforms = DjangoConnectionField(lambda: QuestionForm)
+    def resolve_question_forms(self, args, context, info):
+        print("RESOLVE QUESTION FORMS")
+        return QuestionForm.objects.all()
 
     questions = DjangoConnectionField(lambda: Question)
     def resolve_questions(self, args, context, info):
@@ -69,9 +71,7 @@ class UserViewer(DjangoObjectType):
 
         return token
 
-    #questions = DjangoFilterConnectionField(lambda: Question)
-    #survey = DjangoFilterConnectionField(lambda: Survey)
-    #section = DjangoFilterConnectionField(lambda: Section)
+
 
 class LoginUser(relay.ClientIDMutation):
     class Input:
@@ -137,6 +137,37 @@ class Section(DjangoObjectType):
     @staticmethod
     def resolve_completedCount(self, args, context, info):
         return SectionModel.objects.filter(completed=True).count()
+
+class QuestionForm(DjangoObjectType):
+
+    class Meta:
+        model = QuestionFormModel
+        interfaces = (relay.Node,)
+
+
+
+
+class DispatchForm(relay.ClientIDMutation):
+    class Input:
+        response_json = graphene.String(required=True)
+        qformId = graphene.String(required=True)
+
+    viewer = graphene.Field(UserViewer)
+    questionForm = graphene.Field(QuestionForm)
+
+    @classmethod
+    def mutate_and_get_payload(cls, input, context, info):
+        response = input.get("response_json")
+        id = from_global_id(input.get("qformId"))[1]
+        question = QuestionFormModel.objects.get(pk=id)
+        viewer = get_user(context)
+
+        question.response_json = response
+        question.save()
+
+        return DispatchForm(viewer=viewer, questionForm=question)
+
+
 
 #Section.Connection = connection_for_type(Section)
 class Question(DjangoObjectType):
@@ -208,6 +239,7 @@ class SurveyMutation(graphene.ObjectType, AbstractType):
     add_question = AddQuestion.Field()
     delete_question = DeleteQuestion.Field()
     login_user = LoginUser.Field()
+    dispatch_form = DispatchForm.Field()
 
 class SurveyQuery(graphene.ObjectType, AbstractType):
     node = relay.Node.Field()

@@ -16,6 +16,7 @@ import { RelayNetworkLayer, authMiddleware, urlMiddleware } from 'react-relay-ne
 import {indigo500, indigo700, redA200} from 'material-ui/styles/colors';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import QuestionForm from './QuestionForm'
 
 const muiTheme = getMuiTheme({
     palette: {
@@ -97,11 +98,11 @@ const AppQueries = {
 
 
 class DashboardComponent extends React.Component {
-          state = { loggedIn : false }
 
           constructor(props) {
             super(props);
           }
+
 
           render() {
             return(<div>
@@ -121,40 +122,18 @@ class DashboardComponent extends React.Component {
                              legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
                              label="90%"/>
                              </div>
-                             <div className="gauge-box">
-                     <Gauge value={35}
-                            size={10}
-                            radius={100}
-                            width={20}
-                            sections={["#8cc152", "#ffb74d", "#ffb74d", "#e84528", "#e84528", "#e84528"]}
-                            arrow={{height: 60, width: 6, color: "#ccc"}}
-                            legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
-                            label="35%"/>
-                            </div>
-                    <div className="gauge-box">
-                      <Gauge value={75}
-                             size={10}
-                             radius={100}
-                             width={20}
-                             sections={["#8cc152", "#ffb74d", "#ffb74d", "#e84528", "#e84528", "#e84528"]}
-                             arrow={{height: 60, width: 6, color: "#ccc"}}
-                             legend={['0Gb', '2Gb', '4Gb', '6Gb', '8Gb', '10Gb']}
-                             label="35%"/>
-                     </div>
-
-                    <StatusIndicator question={this.props.viewer.questions.edges[0].node}/>
-                    <Question viewer={this.props.viewer} types={this.props.qtype}/>
-                    </div>
-                    </div>
-                    </MuiThemeProvider>
-                    </div>
-
-                     : <div><Login viewer={this.props.viewer}/>
-
-                     </div>}
+                     <StatusIndicator question={this.props.viewer.questions.edges[0].node}/>
+                     <Question viewer={this.props.viewer} types={this.props.qtype}/>
+                     <QuestionForm viewer={this.props.viewer}/>
+                </div>
+             </div>
+            </MuiThemeProvider>
+            </div>
+             : <div><Login viewer={this.props.viewer}/>
+              </div>}
             </div>)
           }
-        }
+  }
 
 const Dashboard = Relay.createContainer(DashboardComponent, {
 
@@ -162,23 +141,22 @@ const Dashboard = Relay.createContainer(DashboardComponent, {
       qtype: () => Relay.QL`
          fragment on __Type {
               enumValues { name description }
-         } `,
-
+      } `,
       viewer: () => Relay.QL`
          fragment on UserViewer {
               id
               username
+              ${QuestionForm.getFragment('viewer')}
               questions(first: 10000) {
                 edges {
                   node {
                     ${StatusIndicator.getFragment('question')}
+                  }
+                }
               }
-            }
-          }
               ${Question.getFragment('viewer')}
-        }
-                  `,
-  }
+        }`,
+      }
 });
 
 

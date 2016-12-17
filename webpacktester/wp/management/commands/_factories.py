@@ -23,7 +23,7 @@ class QuestionFactory(factory.django.DjangoModelFactory):
         model = Question
 
     name = factory.Sequence(lambda n: "question_%s" % n)
-    question_type = factory.fuzzy.FuzzyChoice(Question.QUESTION_CHOICES)
+    question_type = factory.fuzzy.FuzzyChoice([i[0] for i in Question.QUESTION_CHOICES])
 
     @factory.post_generation
     def section(self, create, extracted, **kwargs):
@@ -39,7 +39,7 @@ class SectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Section
 
-    name = factory.Sequence(lambda n: "section_%s" % n)
+    name = factory.Sequence(lambda n: ("section_%s" % n))
     question = factory.SubFactory(QuestionFactory)
 
 
