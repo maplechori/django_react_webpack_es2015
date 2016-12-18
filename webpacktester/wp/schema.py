@@ -42,9 +42,12 @@ class UserViewer(DjangoObjectType):
     @classmethod
     def get_node(cls, id, context, info):
         user = super(UserViewer, cls).get_node(id, context, info)
-        if context.user.id and user.id == context.user.id:
+        print("get_node", user.id)
+
+        if user.id: #context.user.id and user.id == context.user.id:
             return user
         else:
+            print("failed get node")
             return None
 
     questionforms = DjangoConnectionField(lambda: QuestionForm)

@@ -22,22 +22,12 @@ schema = """
       "validationMessage": "Email must be of proper format: example@example",
       "description": "Email will be used for evil."
     },
-    "environment": {
-      "type": "string",
-      "title": "Environment",
-      "enum": [
-        "LOCAL",
-        "SIT1",
-        "SIT2",
-        "SIT3",
-        "UAT1",
-        "UAT2"
-      ]
-    },
     "port": {
       "title": "Port",
-      "type": "number",
-      "description": "Please write your comment here."
+      "type": "integer",
+      "default" : 80,
+      "validationMessage" : "Please use a port"
+
     }
   },
   "required": [
@@ -48,13 +38,7 @@ schema = """
 },
 "form" :
 [
-  "name",
-  "email",
-  "environment",
-  {
-    "key": "port",
-    "placeholder": "Enter a port"
-  }
+  "*"
 ]
 }"""
 
@@ -76,7 +60,7 @@ class Command(BaseCommand):
 
         _factories.SurveyFactory.create_batch(20)
 
-        for i in range(0, random.randrange(10, 50)):
+        for i in range(0, random.randrange(20000, 50000)):
             sample_set = set(random.sample(set(Survey.objects.all()), 2))
             _factories.SectionFactory.create(survey=sample_set)
 

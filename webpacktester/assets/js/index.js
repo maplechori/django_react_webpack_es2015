@@ -147,7 +147,7 @@ const Dashboard = Relay.createContainer(DashboardComponent, {
               id
               username
               ${QuestionForm.getFragment('viewer')}
-              questions(first: 10000) {
+              questions(first: 10) {
                 edges {
                   node {
                     ${StatusIndicator.getFragment('question')}

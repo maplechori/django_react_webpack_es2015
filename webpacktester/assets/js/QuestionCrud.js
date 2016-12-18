@@ -19,7 +19,7 @@ import { FormsyCheckbox, FormsyDate, FormsyRadio, FormsyRadioGroup,
 
 
 class QuestionComponent extends React.Component {
-    state = {canSubmit: false, update: false, dialogs: [], selectedDialog: null}
+    state = {canSubmit: false, update: false, dialogs: [], selectedDialog: null, isLoading: false}
 
     constructor(props) {
           super(props);
@@ -108,6 +108,13 @@ class QuestionComponent extends React.Component {
         this.setState({ listSelected: listId });
       }
 
+    handleLoadMore = () => {
+
+          this.props.relay.setVariables({
+            count: this.props.relay.variables.count + 10,
+          });
+        }
+
     render() {
       let {paperStyle, switchStyle, submitStyle } = this.styles;
       let { wordsError, numericError, urlError } = this.errorMessages;
@@ -122,13 +129,14 @@ class QuestionComponent extends React.Component {
          <List>
           { this.props.viewer.questions.edges.map((row, index) => (
                     <div key={row.node.id}>
-                      <Dialog title={row.node.id} open={this.state.dialogs[index]} actions={<FlatButton label="Submit" primary={true} keyboardFocus={true} onTouchTap={(e) => this.handleClose(e, index)}/>}/>
+                      <Dialog title={row.node.id} open={this.state.dialogs[index]} actions={<FlatButton label="Submit" primary={true}  onTouchTap={(e) => this.handleClose(e, index)}/>}/>
                       <ListItem onClick={(e) => this.clicky(e, row.node.id, index)}  primaryText={row.node.name} rightIconButton={<IconButton onClick={() => {(Relay.Store.commitUpdate(new DeleteQuestionMutation({viewer: this.props.viewer, question: row.node})))}}><DeleteIcon/></IconButton>}/>
                     </div>
                   ))
          }
          </List>
-
+         {this.props.viewer.questions.pageInfo.hasNextPage ?
+              <RaisedButton label="Load More" onClick={(e) => this.handleLoadMore()}/> : null}
          </Paper>
          <br/>
        <Paper style={paperStyle}>
@@ -192,7 +200,7 @@ class QuestionComponent extends React.Component {
 
 export default Relay.createContainer(QuestionComponent, {
   initialVariables : {
-        limit : 2147483647,
+        count : 10,
       },
 
   fragments: {
@@ -200,13 +208,17 @@ export default Relay.createContainer(QuestionComponent, {
             fragment on UserViewer {
               ${AddQuestionMutation.getFragment('viewer')}
               ${DeleteQuestionMutation.getFragment('viewer')}
-              questions(first: $limit) {
+              questions(first: $count ) {
                 edges {
                   node {
                   id
                   name
                   ${DeleteQuestionMutation.getFragment('question')}
                 }
+
+                }
+                pageInfo {
+                  hasNextPage
                 }
               }
          }`

@@ -21,6 +21,7 @@ class QuestionFormComponent extends React.Component {
         }
 
         onModelChange = (key, val) => {
+
             utils.selectOrSet(key, this.state.model, val);
             console.log(this.state.model);
         }
@@ -28,6 +29,7 @@ class QuestionFormComponent extends React.Component {
         onTouchTap = (e) => {
 
              let validationResult = utils.validateBySchema(this.state.schema, this.state.model);
+             console.log(validationResult);
              if (!validationResult.valid) {
                  this.setState({error: validationResult.error.message});
              } else {
@@ -39,9 +41,10 @@ class QuestionFormComponent extends React.Component {
               }
           }
 
+
           render() {
 
-          return(<div>
+          return(<div style={{width: '50%', marginLeft: "25%"}}>
                   <SchemaForm schema={this.state.schema} form={this.state.form} model={this.state.model} onModelChange={this.onModelChange}/>
                   <RaisedButton type="submit" label="submit" onClick={(e) => this.onTouchTap(e)} />
                   </div>)
