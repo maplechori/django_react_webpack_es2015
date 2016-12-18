@@ -112,7 +112,9 @@ class QuestionComponent extends React.Component {
 
           this.props.relay.setVariables({
             count: this.props.relay.variables.count + 10,
-          });
+          }, ({ready, done, error, aborted}) => {
+      this.setState({isLoading: !ready && !(done || error || aborted)});
+    });
         }
 
     render() {
