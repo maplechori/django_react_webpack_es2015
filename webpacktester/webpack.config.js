@@ -41,7 +41,7 @@ module.exports = {
   postcss: [autoprefixer],
   sassLoader: {
        data: '@import "theme/_config.scss";',
-       includePaths: [path.resolve(__dirname, './assets/js')]
+       includePaths: [path.resolve(__dirname, './assets/js'), ]
  },
  resolve: {
     modulesDirectories: ['node_modules', 'bower_components'],

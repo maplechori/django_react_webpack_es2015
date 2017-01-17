@@ -105,6 +105,7 @@ class DashboardComponent extends React.Component {
 
 
           render() {
+            console.log(this.props.viewer.questions);
             return(<div>
               {localStorage.token && this.props.viewer != null ?
 
@@ -147,7 +148,7 @@ const Dashboard = Relay.createContainer(DashboardComponent, {
               id
               username
               ${QuestionForm.getFragment('viewer')}
-              questions(first: 10) {
+              questions(first: 10 ) {
                 edges {
                   node {
                     ${StatusIndicator.getFragment('question')}

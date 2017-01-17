@@ -120,7 +120,7 @@ class QuestionComponent extends React.Component {
     render() {
       let {paperStyle, switchStyle, submitStyle } = this.styles;
       let { wordsError, numericError, urlError } = this.errorMessages;
-
+      console.log(this.props.viewer.questions);
    return (
 
      <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -202,7 +202,7 @@ class QuestionComponent extends React.Component {
 
 export default Relay.createContainer(QuestionComponent, {
   initialVariables : {
-        count : 10,
+        count : 5,
       },
 
   fragments: {
@@ -210,7 +210,7 @@ export default Relay.createContainer(QuestionComponent, {
             fragment on UserViewer {
               ${AddQuestionMutation.getFragment('viewer')}
               ${DeleteQuestionMutation.getFragment('viewer')}
-              questions(first: $count ) {
+              questions(name_Istartswith: "question_1", first: $count) {
                 edges {
                   node {
                   id

@@ -1,5 +1,6 @@
 from graphene import relay, ObjectType, AbstractType, resolve_only_args
 from graphene_django import DjangoObjectType, DjangoConnectionField
+import django_filters
 from graphene_django.filter import DjangoFilterConnectionField
 from .models import Survey as SurveyModel
 from .models import Section as SectionModel
@@ -17,7 +18,7 @@ def get_user(request):
     print("get_user")
     JWT_ALGORITHM = 'HS256'
     JWT_SECRET = django.conf.settings.SECRET_KEY
-
+    return UserModel.objects.all()[0]
     if hasattr(request, "META") and "HTTP_AUTHORIZATION" in request.META:
         jwt_token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]
 
@@ -32,6 +33,54 @@ def get_user(request):
                 return None
     print("No HTTP AUTHORIZATION")
     return None
+
+
+class QuestionForm(DjangoObjectType):
+
+    class Meta:
+        model = QuestionFormModel
+        filter_fields = {
+
+            'name' : ['exact', 'icontains', 'istartswith']
+        }
+
+        interfaces = (relay.Node,)
+
+
+class Question(DjangoObjectType):
+
+    class Meta:
+        model = QuestionModel
+        filter_fields = {
+
+            'name' : ['exact', 'icontains', 'istartswith']
+        }
+
+        interfaces = (relay.Node,)
+
+    #question_type = graphene.String()
+    #question_type = graphene.Field(QuestionType)
+    count_a = graphene.Int()
+    count_b = graphene.Int()
+    count_c = graphene.Int()
+
+    @staticmethod
+    def resolve_count_a(self, args, context, info):
+        return random.randint(3,12)
+    @staticmethod
+    def resolve_count_b(self, args, context, info):
+        return random.randint(5,8)
+    @staticmethod
+    def resolve_count_c(self, args, context, info):
+        return random.randint(3,5)
+
+
+class QuestionFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_type='icontains')
+
+    class Meta:
+        model = QuestionModel
+        fields = ['name']
 
 class UserViewer(DjangoObjectType):
 
@@ -50,26 +99,32 @@ class UserViewer(DjangoObjectType):
             print("failed get node")
             return None
 
-    questionforms = DjangoConnectionField(lambda: QuestionForm)
+    questionforms = DjangoFilterConnectionField(QuestionForm)
     def resolve_question_forms(self, args, context, info):
         print("RESOLVE QUESTION FORMS")
         return QuestionForm.objects.all()
 
-    questions = DjangoConnectionField(lambda: Question)
+    questions = DjangoFilterConnectionField(Question) ##filterset_class=QuestionFilter)
     def resolve_questions(self, args, context, info):
+
+        if 'first' in args:
+            del(args['first'])
+
+
         print("RESOLVE QUESTIONS")
-        return QuestionModel.objects.all()
+        return QuestionModel.objects.filter(**args)
 
     token = graphene.String()
     def resolve_token(self, args, context, info):
         print("RESOLVE TOKEN")
-        if self.id != context.user.id and not getattr(self, 'is_current_user', False):
-            return None
+        #if self.id != context.user.id and not getattr(self, 'is_current_user', False):
+        #    return None
 
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
         jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
-        payload = jwt_payload_handler(self)
+        #payload = jwt_payload_handler(self)
+        payload = jwt_payload_handler(UserModel.objects.get(1))
         token = jwt_encode_handler(payload)
 
         return token
@@ -141,12 +196,6 @@ class Section(DjangoObjectType):
     def resolve_completedCount(self, args, context, info):
         return SectionModel.objects.filter(completed=True).count()
 
-class QuestionForm(DjangoObjectType):
-
-    class Meta:
-        model = QuestionFormModel
-        interfaces = (relay.Node,)
-
 
 
 
@@ -172,29 +221,8 @@ class DispatchForm(relay.ClientIDMutation):
 
 
 
+
 #Section.Connection = connection_for_type(Section)
-class Question(DjangoObjectType):
-
-    class Meta:
-        model = QuestionModel
-        interfaces = (relay.Node,)
-        filter_fields = { 'name' : ['exact', 'icontains']}
-
-    #question_type = graphene.String()
-    #question_type = graphene.Field(QuestionType)
-    count_a = graphene.Int()
-    count_b = graphene.Int()
-    count_c = graphene.Int()
-
-    @staticmethod
-    def resolve_count_a(self, args, context, info):
-        return random.randint(3,12)
-    @staticmethod
-    def resolve_count_b(self, args, context, info):
-        return random.randint(5,8)
-    @staticmethod
-    def resolve_count_c(self, args, context, info):
-        return random.randint(3,5)
 
 class DeleteQuestion(relay.ClientIDMutation):
 

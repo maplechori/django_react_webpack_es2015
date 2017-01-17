@@ -26,7 +26,9 @@ schema = """
       "title": "Port",
       "type": "integer",
       "default" : 80,
-      "validationMessage" : "Please use a port"
+      "minimum": 0,
+      "maximum" : 15000,
+      "validationMessage" : "Please use a port between 0 and 15000"
 
     }
   },
@@ -60,7 +62,7 @@ class Command(BaseCommand):
 
         _factories.SurveyFactory.create_batch(20)
 
-        for i in range(0, random.randrange(20000, 50000)):
+        for i in range(0, random.randrange(100,500)):
             sample_set = set(random.sample(set(Survey.objects.all()), 2))
             _factories.SectionFactory.create(survey=sample_set)
 
